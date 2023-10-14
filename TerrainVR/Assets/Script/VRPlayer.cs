@@ -43,6 +43,7 @@ public class VRPlayer : MonoBehaviour
     {
         stroke = new GameObject("Stroke").AddComponent<Stroke>();
         stroke.CreateStroke(position, leftBrushSize, rightBrushSize, filled);
+        strokes.Add(stroke);
     }
 
     void OnDrawing(Vector3 position)
@@ -54,8 +55,6 @@ public class VRPlayer : MonoBehaviour
     void OnFinishingDrawing(Stroke s)
     {
         if (s == null) return;
-
-        strokes.Add(s);
 
         Vector3 position, derivative;
         float offset, brushSize;
@@ -180,27 +179,24 @@ public class VRPlayer : MonoBehaviour
 
         foreach (Stroke s in strokes)
         {
-            if (s.ControllerInRange(position))
+            if (controllerIndex == 0)
             {
-                if (controllerIndex == 0)
+                leftEditingIndex = s.LocateEditingIndex(position);
+                if (leftEditingIndex >= 0)
                 {
-                    leftEditingIndex = stroke.LocateEditingIndex(position);
-                    if (leftEditingIndex >= 0)
-                    {
-                        stroke = s;
-                        editing = true;
-                        break;
-                    }
+                    stroke = s;
+                    editing = true;
+                    break;
                 }
-                else
+            }
+            else
+            {
+                rightEditingIndex = s.LocateEditingIndex(position);
+                if (rightEditingIndex >= 0)
                 {
-                    rightEditingIndex = stroke.LocateEditingIndex(position);
-                    if (rightEditingIndex >= 0)
-                    {
-                        stroke = s;
-                        editing = true;
-                        break;
-                    }
+                    stroke = s;
+                    editing = true;
+                    break;
                 }
             }
         }
@@ -226,6 +222,8 @@ public class VRPlayer : MonoBehaviour
         {
             OnFinishingDrawing(stroke);
         }
+
+        editing = false;
     }
 
     // Start is called before the first frame update
@@ -311,7 +309,7 @@ public class VRPlayer : MonoBehaviour
             {
                 rightTriggerButtonPressed_f = false;
 
-                OnFinishingDrawing(stroke);
+                OnFinishingInput();
             }
         }
 
@@ -347,6 +345,10 @@ public class VRPlayer : MonoBehaviour
             {
                 rightPrimaryButtonPressed_f = true;
                 terrainTool.ClearTerrain();
+
+                strokes = new List<Stroke>();
+                Stroke[] ss = FindObjectsOfType<Stroke>();
+                foreach (Stroke stroke in ss) stroke.DestroyStroke();
             }
         }
         else

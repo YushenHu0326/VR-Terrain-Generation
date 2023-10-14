@@ -15,8 +15,6 @@ public class Stroke : MonoBehaviour
     private float rightBrushSize = 1f;
     private bool filled;
 
-    private float xMin, xMax, yMin, yMax;
-
     private GameObject surface;
 
     public void CreateStroke(Vector3 position, float leftBrushSize, float rightBrushSize, bool filled)
@@ -28,11 +26,6 @@ public class Stroke : MonoBehaviour
         this.leftBrushSize = leftBrushSize;
         this.rightBrushSize = rightBrushSize;
         this.filled = filled;
-
-        this.xMin = position.x;
-        this.xMax = position.x;
-        this.yMin = position.z;
-        this.yMax = position.z;
 
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
@@ -80,21 +73,7 @@ public class Stroke : MonoBehaviour
             }
 
             lastStrokePosition = position;
-
-            if (position.x < xMin) xMin = position.x;
-            if (position.x > xMax) xMax = position.x;
-            if (position.z < yMin) yMin = position.z;
-            if (position.z > yMax) yMax = position.z;
         }
-    }
-
-    public bool ControllerInRange(Vector3 position)
-    {
-        if (position.x > xMin && position.x < xMax)
-            if (position.z > yMin && position.z < yMax)
-                return true;
-
-        return false;
     }
 
     public int LocateEditingIndex(Vector3 position)
@@ -108,7 +87,56 @@ public class Stroke : MonoBehaviour
 
     public void EditStroke(Vector3 firstPosition, Vector3 secondPosition, float brushSize, int firstIndex, int secondIndex)
     {
-        
+        if (secondIndex < 0)
+        {
+            Vector3 d = firstPosition - positions[firstIndex];
+            int start = firstIndex;
+            int end = start + (int)(brushSize * 10f);
+
+            if (end >= positions.Count) end = positions.Count;
+
+            for (int i = start; i < end; i++)
+            {
+                positions[i] += d * (1f - (float)(i - start) / (float)(end - start));
+                lineRenderer.SetPosition(i, positions[i]);
+            }
+
+            start -= 1;
+            if (start < 0) start = 0;
+            end = start - (int)(brushSize * 10f);
+            if (end < 0) end = 0;
+
+            for (int i = start; i >= end; i--)
+            {
+                positions[i] += d * (1f - (float)(i - start) / (float)(end - start));
+                lineRenderer.SetPosition(i, positions[i]);
+            }
+        }
+        else if (firstIndex < 0)
+        {
+            Vector3 d = secondPosition - positions[secondIndex];
+            int start = secondIndex;
+            int end = start + (int)(brushSize * 10f);
+
+            if (end >= positions.Count) end = positions.Count;
+
+            for (int i = start; i < end; i++)
+            {
+                positions[i] += d * (1f - (float)(i - start) / (float)(end - start));
+                lineRenderer.SetPosition(i, positions[i]);
+            }
+
+            start -= 1;
+            if (start < 0) start = 0;
+            end = start - (int)(brushSize * 10f);
+            if (end < 0) end = 0;
+
+            for (int i = start; i >= end; i--)
+            {
+                positions[i] += d * (1f - (float)(i - start) / (float)(end - start));
+                lineRenderer.SetPosition(i, positions[i]);
+            }
+        }
     }
 
     public void DestroyStroke()

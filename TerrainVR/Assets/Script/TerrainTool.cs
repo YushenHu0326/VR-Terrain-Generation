@@ -319,9 +319,6 @@ public sealed class TerrainTool : MonoBehaviour
         }
 
         terrainData.SetHeights(0, 0, virtualHeights);
-
-        Stroke[] strokes = Object.FindObjectsOfType<Stroke>();
-        foreach (Stroke stroke in strokes) stroke.DestroyStroke();
     }
 
     public void FlattenTerrain(Vector3 worldPosition, float height, int brushWidth, int brushHeight)
