@@ -291,87 +291,14 @@ public sealed class TerrainTool : MonoBehaviour
     }
 
 
-    public void ApplyTerrain(float xMin, float xMax, float yMin, float yMax, float radius)
+    public void ApplyTerrain()
     {
-        Vector3 min = WorldToTerrainPosition(new Vector3(xMin, 0f, yMin));
-        Vector3 max = WorldToTerrainPosition(new Vector3(xMax, 0f, yMax));
-        float range = Mathf.Max(max.x - min.x, max.z - min.z) + 2f * radius;
-
         TerrainModifier modifier = Object.FindObjectOfType<TerrainModifier>();
         modifier.heights = virtualHeights;
         modifier.alphas = alphas;
 
-        modifier.xOffset = 0;
-        modifier.yOffset = 0;
-        modifier.range = GetHeightmapResolution();
-
-        //Activate the following part for partial editing
-        /*
-        modifier.xOffset = (int)(min.x - radius);
-        modifier.yOffset = (int)(min.z - radius);
-        modifier.range = (int)range;
-        
-        if ((min.x - radius < 0f || min.z - radius < 0f) || (max.x + radius > GetHeightmapResolution() || max.z + radius > GetHeightmapResolution()))
-        {
-            modifier.xOffset = 0;
-            modifier.yOffset = 0;
-            modifier.range = GetHeightmapResolution();
-        }*/
-
         modifier.ModifyTerrain();
-
-        /*
-        float terrainSizeY = GetTerrainSize().y;
-        for (var y = 0; y < GetHeightmapResolution(); y++)
-        {
-            for (var x = 0; x < GetHeightmapResolution(); x++)
-            {
-                virtualHeights[y, x] = terrainOffset / terrainSizeY;
-                alphas[y, x] = 0f;
-            }
-        }*/
-        
-        //GetTerrainData().SetHeights(0, 0, virtualHeights);
     }
-
-    /*
-    public void ApplyFilledTerrain(Vector3 worldPosition, Vector3 initialPosition, float radius)
-    {
-        if (worldPosition.x != initialPosition.x)
-        {
-            float start = Mathf.Min(worldPosition.x, initialPosition.x);
-            float end = Mathf.Max(worldPosition.x, initialPosition.x);
-
-            float y, z;
-
-            while (start < end)
-            {
-                y = initialPosition.y + (float)(start - initialPosition.x) / (float)(worldPosition.x - initialPosition.x) * (worldPosition.y - initialPosition.y);
-                z = initialPosition.z + (float)(start - initialPosition.x) / (float)(worldPosition.x - initialPosition.x) * (worldPosition.z - initialPosition.z);
-                RaiseTerrain(new Vector3(start, _targetTerrain.transform.position.y, z),
-                                 y - (_targetTerrain.transform.position.y + terrainOffset),
-                                 (int)radius, (int)radius, initialPosition - worldPosition);
-                start += 1f;
-            }
-        }
-        else
-        {
-            float start = Mathf.Min(worldPosition.z, initialPosition.z);
-            float end = Mathf.Max(worldPosition.z, initialPosition.z);
-
-            float x, y;
-
-            while (start < end)
-            {
-                x = initialPosition.x + (float)(start - initialPosition.z) / (float)(worldPosition.z - initialPosition.z) * (worldPosition.x - initialPosition.x);
-                y = initialPosition.y + (float)(start - initialPosition.z) / (float)(worldPosition.z - initialPosition.z) * (worldPosition.y - initialPosition.y);
-                RaiseTerrain(new Vector3(x, _targetTerrain.transform.position.y, start),
-                                 y - (_targetTerrain.transform.position.y + terrainOffset),
-                                 (int)radius, (int)radius, initialPosition - worldPosition);
-                start += 1f;
-            }
-        }
-    }*/
     
 
     public void ClearTerrain()
@@ -391,8 +318,8 @@ public sealed class TerrainTool : MonoBehaviour
 
         terrainData.SetHeights(0, 0, virtualHeights);
 
-        LineRenderer[] lineRenderers = Object.FindObjectsOfType<LineRenderer>();
-        foreach (LineRenderer lineRenderer in lineRenderers) Destroy(lineRenderer.gameObject);
+        Stroke[] strokes = Object.FindObjectsOfType<Stroke>();
+        foreach (Stroke stroke in strokes) stroke.DestroyStroke();
     }
 
     public void FlattenTerrain(Vector3 worldPosition, float height, int brushWidth, int brushHeight)
