@@ -149,16 +149,16 @@ public class VRPlayer : MonoBehaviour
         if (stroke != null)
         {
             if (controllerIndex == 0)
-                stroke.EditStroke(position, new Vector3(), Mathf.Max(leftBrushSize, rightBrushSize), leftEditingIndex, -1);
+                stroke.EditStroke(position, new Vector3(), leftEditingIndex, -1);
             else
-                stroke.EditStroke(new Vector3(), position, Mathf.Max(leftBrushSize, rightBrushSize), -1, rightEditingIndex);
+                stroke.EditStroke(new Vector3(), position, -1, rightEditingIndex);
         }
     }
 
     void OnBothEditingStroke(Vector3 leftPosition, Vector3 rightPosition)
     {
         if (stroke != null)
-            stroke.EditStroke(leftPosition, rightPosition, Mathf.Max(leftBrushSize, rightBrushSize), leftEditingIndex, rightEditingIndex);
+            stroke.EditStroke(leftPosition, rightPosition, leftEditingIndex, rightEditingIndex);
     }
 
     public void OnFirstInput(Vector3 position, int controllerIndex)
@@ -204,7 +204,7 @@ public class VRPlayer : MonoBehaviour
         if (!editing) OnStartDrawing(position);
     }
 
-    public void OnSingleInput(Vector3 position, int controllerIndex)
+    public void OnInput(Vector3 position, int controllerIndex)
     {
         if (editing) OnSingleEditingStroke(position, controllerIndex);
         else OnDrawing(position);
@@ -226,6 +226,17 @@ public class VRPlayer : MonoBehaviour
         editing = false;
     }
 
+    public void ClearInput()
+    {
+        if (terrainTool == null) return;
+
+        terrainTool.ClearTerrain();
+
+        strokes = new List<Stroke>();
+        Stroke[] ss = FindObjectsOfType<Stroke>();
+        foreach (Stroke stroke in ss) stroke.DestroyStroke();
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -241,7 +252,7 @@ public class VRPlayer : MonoBehaviour
 
         if (rightDevices.Count > 0) rightDevice = rightDevices[0];
 
-        terrainTool = GetComponent<TerrainTool>();
+        terrainTool = FindObjectOfType<TerrainTool>();
 
         userInput = new Texture2D(500, 500, TextureFormat.ARGB32, false);
 
@@ -280,7 +291,7 @@ public class VRPlayer : MonoBehaviour
             }
             else
             {
-                OnSingleInput(leftController.transform.position, 0);
+                OnInput(leftController.transform.position, 0);
             }
         }
         else
@@ -288,6 +299,9 @@ public class VRPlayer : MonoBehaviour
             if (leftTriggerButtonPressed_f)
             {
                 leftTriggerButtonPressed_f = false;
+
+                if (!rightTriggerButtonPressed_f)
+                    OnFinishingInput();
             }
         }
 
@@ -301,7 +315,7 @@ public class VRPlayer : MonoBehaviour
             }
 
             if (!leftTriggerButtonPressed_f)
-                OnSingleInput(rightController.transform.position, 1);
+                OnInput(rightController.transform.position, 1);
         }
         else
         {
@@ -309,7 +323,8 @@ public class VRPlayer : MonoBehaviour
             {
                 rightTriggerButtonPressed_f = false;
 
-                OnFinishingInput();
+                if (!leftTriggerButtonPressed_f)
+                    OnFinishingInput();
             }
         }
 
@@ -344,11 +359,8 @@ public class VRPlayer : MonoBehaviour
             if (!rightPrimaryButtonPressed_f)
             {
                 rightPrimaryButtonPressed_f = true;
-                terrainTool.ClearTerrain();
 
-                strokes = new List<Stroke>();
-                Stroke[] ss = FindObjectsOfType<Stroke>();
-                foreach (Stroke stroke in ss) stroke.DestroyStroke();
+                ClearInput();
             }
         }
         else
