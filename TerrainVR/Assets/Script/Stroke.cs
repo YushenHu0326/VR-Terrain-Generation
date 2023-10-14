@@ -15,17 +15,24 @@ public class Stroke : MonoBehaviour
     private float rightBrushSize = 1f;
     private bool filled;
 
+    private float xMin, xMax, yMin, yMax;
+
     private GameObject surface;
 
-    public void CreateStroke(Vector3 initialStrokePosition, float leftBrushSize, float rightBrushSize, bool filled)
+    public void CreateStroke(Vector3 position, float leftBrushSize, float rightBrushSize, bool filled)
     {
         positions = new List<Vector3>();
         strokeIndex = 0;
 
-        this.lastStrokePosition = initialStrokePosition;
+        this.lastStrokePosition = position;
         this.leftBrushSize = leftBrushSize;
         this.rightBrushSize = rightBrushSize;
         this.filled = filled;
+
+        this.xMin = position.x;
+        this.xMax = position.x;
+        this.yMin = position.z;
+        this.yMax = position.z;
 
         lineRenderer = gameObject.AddComponent<LineRenderer>();
         lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
@@ -73,7 +80,35 @@ public class Stroke : MonoBehaviour
             }
 
             lastStrokePosition = position;
+
+            if (position.x < xMin) xMin = position.x;
+            if (position.x > xMax) xMax = position.x;
+            if (position.z < yMin) yMin = position.z;
+            if (position.z > yMax) yMax = position.z;
         }
+    }
+
+    public bool ControllerInRange(Vector3 position)
+    {
+        if (position.x > xMin && position.x < xMax)
+            if (position.z > yMin && position.z < yMax)
+                return true;
+
+        return false;
+    }
+
+    public int LocateEditingIndex(Vector3 position)
+    {
+        for (int i = 0; i < positions.Count; i++)
+            if (Vector3.Distance(position, positions[i]) < 5f)
+                return i;
+
+        return -1;
+    }
+
+    public void EditStroke(Vector3 firstPosition, Vector3 secondPosition, float brushSize, int firstIndex, int secondIndex)
+    {
+        
     }
 
     public void DestroyStroke()

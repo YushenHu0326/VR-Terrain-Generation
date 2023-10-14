@@ -10,6 +10,7 @@ public class VRPlayer : MonoBehaviour
     public GameObject rightController;
 
     private Stroke stroke;
+    private List<Stroke> strokes;
     private GameObject surface;
 
     private Vector3 lastStrokePosition;
@@ -18,6 +19,9 @@ public class VRPlayer : MonoBehaviour
 
     public float leftBrushSize = 1f;
     public float rightBrushSize = 1f;
+
+    private int leftEditingIndex;
+    private int rightEditingIndex;
 
     Texture2D userInput;
 
@@ -33,34 +37,38 @@ public class VRPlayer : MonoBehaviour
 
     private TerrainTool terrainTool;
 
-    public void OnStartDrawing(Vector3 position)
+    private bool editing;
+
+    void OnStartDrawing(Vector3 position)
     {
         stroke = new GameObject("Stroke").AddComponent<Stroke>();
         stroke.CreateStroke(position, leftBrushSize, rightBrushSize, filled);
     }
 
-    public void OnDrawing(Vector3 position)
+    void OnDrawing(Vector3 position)
     {
         if (stroke != null)
             stroke.DrawStroke(position);
     }
 
-    public void OnFinishDrawing()
+    void OnFinishingDrawing(Stroke s)
     {
-        if (stroke == null) return;
+        if (s == null) return;
+
+        strokes.Add(s);
 
         Vector3 position, derivative;
         float offset, brushSize;
 
         if (filled)
         {
-            for (int i = 0; i < stroke.GetComponent<LineRenderer>().positionCount; i++)
+            for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
             {
-                position = stroke.GetComponent<Stroke>().GetPosition(i);
+                position = s.GetComponent<Stroke>().GetPosition(i);
 
-                if (i == 0) derivative = stroke.GetPosition(i + 1) - stroke.GetPosition(i);
-                else if (i == stroke.GetComponent<LineRenderer>().positionCount - 1) derivative = stroke.GetPosition(i) - stroke.GetPosition(i - 1);
-                else derivative = stroke.GetPosition(i + 1) - stroke.GetPosition(i - 1);
+                if (i == 0) derivative = s.GetPosition(i + 1) - s.GetPosition(i);
+                else if (i == s.GetComponent<LineRenderer>().positionCount - 1) derivative = s.GetPosition(i) - s.GetPosition(i - 1);
+                else derivative = s.GetPosition(i + 1) - s.GetPosition(i - 1);
 
                 offset = position.y - terrainTool._targetTerrain.transform.position.y;
                 brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
@@ -69,18 +77,18 @@ public class VRPlayer : MonoBehaviour
                 {
                     terrainTool.FillTerrain(new Vector3(position.x,
                                                         terrainTool._targetTerrain.transform.position.y,
-                                                        position.z), stroke.GetPosition(0), Mathf.Abs(offset), 20, 20);
+                                                        position.z), s.GetPosition(0), Mathf.Abs(offset), 20, 20);
                 }
             }
         }
 
-        for (int i = 0; i < stroke.GetComponent<LineRenderer>().positionCount; i++)
+        for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
         {
-            position = stroke.GetPosition(i);
+            position = s.GetPosition(i);
 
-            if (i == 0) derivative = stroke.GetPosition(i + 1) - stroke.GetPosition(i);
-            else if (i == stroke.GetComponent<LineRenderer>().positionCount - 1) derivative = stroke.GetPosition(i) - stroke.GetPosition(i - 1);
-            else derivative = stroke.GetPosition(i + 1) - stroke.GetPosition(i - 1);
+            if (i == 0) derivative = s.GetPosition(i + 1) - s.GetPosition(i);
+            else if (i == s.GetComponent<LineRenderer>().positionCount - 1) derivative = s.GetPosition(i) - s.GetPosition(i - 1);
+            else derivative = s.GetPosition(i + 1) - s.GetPosition(i - 1);
 
             offset = position.y - terrainTool._targetTerrain.transform.position.y;
             brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
@@ -105,13 +113,13 @@ public class VRPlayer : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < stroke.GetComponent<LineRenderer>().positionCount; i++)
+        for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
         {
-            position = stroke.GetPosition(i);
+            position = s.GetPosition(i);
 
-            if (i == 0) derivative = stroke.GetPosition(i + 1) - stroke.GetPosition(i);
-            else if (i == stroke.GetComponent<LineRenderer>().positionCount - 1) derivative = stroke.GetPosition(i) - stroke.GetPosition(i - 1);
-            else derivative = stroke.GetPosition(i + 1) - stroke.GetPosition(i - 1);
+            if (i == 0) derivative = s.GetPosition(i + 1) - s.GetPosition(i);
+            else if (i == s.GetComponent<LineRenderer>().positionCount - 1) derivative = s.GetPosition(i) - s.GetPosition(i - 1);
+            else derivative = s.GetPosition(i + 1) - s.GetPosition(i - 1);
 
             offset = position.y - terrainTool._targetTerrain.transform.position.y;
             brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
@@ -137,6 +145,89 @@ public class VRPlayer : MonoBehaviour
         terrainTool.ApplyTerrain();
     }
 
+    void OnSingleEditingStroke(Vector3 position, int controllerIndex)
+    {
+        if (stroke != null)
+        {
+            if (controllerIndex == 0)
+                stroke.EditStroke(position, new Vector3(), Mathf.Max(leftBrushSize, rightBrushSize), leftEditingIndex, -1);
+            else
+                stroke.EditStroke(new Vector3(), position, Mathf.Max(leftBrushSize, rightBrushSize), -1, rightEditingIndex);
+        }
+    }
+
+    void OnBothEditingStroke(Vector3 leftPosition, Vector3 rightPosition)
+    {
+        if (stroke != null)
+            stroke.EditStroke(leftPosition, rightPosition, Mathf.Max(leftBrushSize, rightBrushSize), leftEditingIndex, rightEditingIndex);
+    }
+
+    public void OnFirstInput(Vector3 position, int controllerIndex)
+    {
+        if (editing)
+        {
+            if (controllerIndex == 0)
+            {
+                leftEditingIndex = stroke.LocateEditingIndex(position);
+            }
+            else
+            {
+                rightEditingIndex = stroke.LocateEditingIndex(position);
+            }
+
+            return;
+        }
+
+        foreach (Stroke s in strokes)
+        {
+            if (s.ControllerInRange(position))
+            {
+                if (controllerIndex == 0)
+                {
+                    leftEditingIndex = stroke.LocateEditingIndex(position);
+                    if (leftEditingIndex >= 0)
+                    {
+                        stroke = s;
+                        editing = true;
+                        break;
+                    }
+                }
+                else
+                {
+                    rightEditingIndex = stroke.LocateEditingIndex(position);
+                    if (rightEditingIndex >= 0)
+                    {
+                        stroke = s;
+                        editing = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (!editing) OnStartDrawing(position);
+    }
+
+    public void OnSingleInput(Vector3 position, int controllerIndex)
+    {
+        if (editing) OnSingleEditingStroke(position, controllerIndex);
+        else OnDrawing(position);
+    }
+
+    public void OnFinishingInput()
+    {
+        if (editing)
+        {
+            terrainTool.ClearTerrain();
+            foreach (Stroke s in strokes)
+                OnFinishingDrawing(s);
+        }
+        else
+        {
+            OnFinishingDrawing(stroke);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -157,6 +248,11 @@ public class VRPlayer : MonoBehaviour
         userInput = new Texture2D(500, 500, TextureFormat.ARGB32, false);
 
         erosionStrength = 100f;
+
+        strokes = new List<Stroke>();
+
+        leftEditingIndex = -1;
+        rightEditingIndex = -1;
     }
 
     // Update is called once per frame
@@ -174,13 +270,20 @@ public class VRPlayer : MonoBehaviour
         if (leftTriggerButtonPressed)
         {
             if (!leftTriggerButtonPressed_f)
+            {
                 leftTriggerButtonPressed_f = true;
 
-            erosionStrength -= 1f;
-            if (erosionStrength < 0f) erosionStrength = 100f;
-            erosionStrength = Mathf.Clamp(erosionStrength, 0f, 100f);
+                OnFirstInput(leftController.transform.position, 0);
+            }
 
-            Debug.Log(erosionStrength);
+            if (rightTriggerButtonPressed_f)
+            {
+                OnBothEditingStroke(leftController.transform.position, rightController.transform.position);
+            }
+            else
+            {
+                OnSingleInput(leftController.transform.position, 0);
+            }
         }
         else
         {
@@ -196,10 +299,11 @@ public class VRPlayer : MonoBehaviour
             {
                 rightTriggerButtonPressed_f = true;
 
-                OnStartDrawing(rightController.transform.position);
+                OnFirstInput(rightController.transform.position, 1);
             }
 
-            OnDrawing(rightController.transform.position);
+            if (!leftTriggerButtonPressed_f)
+                OnSingleInput(rightController.transform.position, 1);
         }
         else
         {
@@ -207,7 +311,7 @@ public class VRPlayer : MonoBehaviour
             {
                 rightTriggerButtonPressed_f = false;
 
-                OnFinishDrawing();
+                OnFinishingDrawing(stroke);
             }
         }
 
