@@ -36,9 +36,9 @@ public class TerrainModifier : MonoBehaviour
         maxHeight = 0.01f;
         minHeight = 1.01f;
 
-        for (int y = 0; y < range; y++)
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
         {
-            for (int x = 0; x < range; x++)
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 if (heights[y + yOffset, x + xOffset] > maxHeight) 
                     maxHeight = heights[y + yOffset, x + xOffset];
@@ -50,11 +50,11 @@ public class TerrainModifier : MonoBehaviour
 
     Texture2D RetrieveTerrainHeightmap()
     {
-        Texture2D tex = new Texture2D(range, range, TextureFormat.ARGB32, false);
+        Texture2D tex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
 
-        for (int y = 0; y < range; y++)
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
         {
-            for (int x = 0; x < range; x++)
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 tex.SetPixel(x, y, new Color((heights[y + yOffset, x + xOffset] - minHeight) / (maxHeight - minHeight),
                                              0f, 0f, 1));
@@ -66,11 +66,11 @@ public class TerrainModifier : MonoBehaviour
 
     Texture2D RetrieveTerrainStroke()
     {
-        Texture2D tex = new Texture2D(range, range, TextureFormat.ARGB32, false);
+        Texture2D tex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
 
-        for (int y = 0; y < range; y++)
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
         {
-            for (int x = 0; x < range; x++)
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 tex.SetPixel(x, y, new Color(alphas[y + yOffset, x + xOffset],
                                              0f, 0f, 1));
@@ -87,7 +87,7 @@ public class TerrainModifier : MonoBehaviour
         RenderTexture.active = rt;
 
         Graphics.Blit(tex, rt);
-        tex.Reinitialize(256, 256, tex.format, true);
+        tex.Resize(256, 256, tex.format, true);
         tex.filterMode = FilterMode.Bilinear;
         tex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
         tex.Apply();
@@ -97,7 +97,7 @@ public class TerrainModifier : MonoBehaviour
         RenderTexture.active = rt;
 
         Graphics.Blit(strokeTex, rt);
-        strokeTex.Reinitialize(256, 256, strokeTex.format, true);
+        strokeTex.Resize(256, 256, strokeTex.format, true);
         strokeTex.filterMode = FilterMode.Bilinear;
         strokeTex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
         strokeTex.Apply();
@@ -157,13 +157,13 @@ public class TerrainModifier : MonoBehaviour
         DestroyImmediate(blur);
 
         tex.Apply();
-        RenderTexture rt = RenderTexture.GetTemporary(range, range, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
+        RenderTexture rt = RenderTexture.GetTemporary(terrainData.heightmapResolution, terrainData.heightmapResolution, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
         RenderTexture.active = rt;
 
         Graphics.Blit(tex, rt);
-        tex.Reinitialize(range, range, tex.format, true);
+        tex.Resize(terrainData.heightmapResolution, terrainData.heightmapResolution, tex.format, true);
         tex.filterMode = FilterMode.Bilinear;
-        tex.ReadPixels(new Rect(0.0f, 0.0f, range, range), 0, 0);
+        tex.ReadPixels(new Rect(0.0f, 0.0f, terrainData.heightmapResolution, terrainData.heightmapResolution), 0, 0);
         tex.Apply();
 
         byte[] bytes = tex.EncodeToPNG();
@@ -189,21 +189,21 @@ public class TerrainModifier : MonoBehaviour
         System.IO.File.WriteAllBytes(Application.dataPath + "/a.png", bytes);
 
         float[,] originHeights = terrainData.GetHeights(0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
-        float[,] newHeights = new float[range, range];
+        float[,] newHeights = new float[terrainData.heightmapResolution, terrainData.heightmapResolution];
 
         maxColor = 0f;
 
-        for (int y = 0; y < range; y++)
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
         {
-            for (int x = 0; x < range; x++)
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 if (tex.GetPixel(x, y).r > maxColor) maxColor = tex.GetPixel(x, y).r;
             }
         }
 
-        for (int y = 0; y < range; y++)
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
         {
-            for (int x = 0; x < range; x++)
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 newHeights[y, x] = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
 

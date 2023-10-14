@@ -19,6 +19,7 @@ public class Stroke : MonoBehaviour
 
     public void CreateStroke(Vector3 initialStrokePosition, float leftBrushSize, float rightBrushSize, bool filled)
     {
+        positions = new List<Vector3>();
         strokeIndex = 0;
 
         this.lastStrokePosition = initialStrokePosition;
