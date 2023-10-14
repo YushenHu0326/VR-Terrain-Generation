@@ -87,7 +87,7 @@ public class TerrainModifier : MonoBehaviour
         RenderTexture.active = rt;
 
         Graphics.Blit(tex, rt);
-        tex.Resize(256, 256, tex.format, true);
+        tex.Reinitialize(256, 256, tex.format, true);
         tex.filterMode = FilterMode.Bilinear;
         tex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
         tex.Apply();
@@ -97,7 +97,7 @@ public class TerrainModifier : MonoBehaviour
         RenderTexture.active = rt;
 
         Graphics.Blit(strokeTex, rt);
-        strokeTex.Resize(256, 256, strokeTex.format, true);
+        strokeTex.Reinitialize(256, 256, strokeTex.format, true);
         strokeTex.filterMode = FilterMode.Bilinear;
         strokeTex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
         strokeTex.Apply();
@@ -161,7 +161,7 @@ public class TerrainModifier : MonoBehaviour
         RenderTexture.active = rt;
 
         Graphics.Blit(tex, rt);
-        tex.Resize(terrainData.heightmapResolution, terrainData.heightmapResolution, tex.format, true);
+        tex.Reinitialize(terrainData.heightmapResolution, terrainData.heightmapResolution, tex.format, true);
         tex.filterMode = FilterMode.Bilinear;
         tex.ReadPixels(new Rect(0.0f, 0.0f, terrainData.heightmapResolution, terrainData.heightmapResolution), 0, 0);
         tex.Apply();

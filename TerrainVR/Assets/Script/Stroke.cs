@@ -52,7 +52,6 @@ public class Stroke : MonoBehaviour
             lineRenderer.positionCount = strokeIndex + 1;
             lineRenderer.SetPosition(strokeIndex, position);
             strokeIndex++;
-            lastStrokePosition = position;
 
             if (filled)
             {
@@ -72,6 +71,8 @@ public class Stroke : MonoBehaviour
                 triangles[surface.GetComponent<MeshFilter>().mesh.triangles.Length + 2] = surface.GetComponent<MeshFilter>().mesh.triangles.Length + 2;
                 surface.GetComponent<MeshFilter>().mesh.triangles = triangles;
             }
+
+            lastStrokePosition = position;
         }
     }
 
