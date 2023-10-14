@@ -54,6 +54,8 @@ public sealed class TerrainTool : MonoBehaviour
             }
         }
 
+        _targetTerrain.terrainData.SetHeights(0, 0, virtualHeights);
+
         alphas = new float[GetHeightmapResolution(), GetHeightmapResolution()];
     }
 
