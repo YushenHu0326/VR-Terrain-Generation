@@ -151,7 +151,7 @@ public sealed class TerrainTool : MonoBehaviour
         }
     }
 
-    public void PaintStroke(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, float value, int width)
+    public void PaintStroke(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, int width)
     {
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
 
@@ -166,9 +166,17 @@ public sealed class TerrainTool : MonoBehaviour
             for (var x = 0; x < brushSize.x; x++)
             {
                 if (Mathf.Abs(derivative.normalized.y) < 0.15f)
+                {
                     if (y >= brushSize.y / 2 - width && y <= brushSize.y / 2 + width)
                         if (x >= brushSize.x / 2 - width && x <= brushSize.x / 2 + width)
-                            alphas[y + brushPosition.y, x + brushPosition.x] = value;
+                            alphas[y + brushPosition.y, x + brushPosition.x] = 1f;
+                }
+                else if (Mathf.Abs(derivative.normalized.y) > 0.8f)
+                {
+                    if (y >= brushSize.y / 2 - width * 3 && y <= brushSize.y / 2 + width * 3)
+                        if (x >= brushSize.x / 2 - width * 3 && x <= brushSize.x / 2 + width * 3)
+                            alphas[y + brushPosition.y, x + brushPosition.x] = 0.6f;
+                }
             }
         }
     }
