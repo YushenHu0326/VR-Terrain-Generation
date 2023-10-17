@@ -129,7 +129,7 @@ public class VRPlayer : MonoBehaviour
                                                     terrainTool._targetTerrain.transform.position.y,
                                                     position.z),
                                                     Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
-                                                    derivative, 0.6f, 6);
+                                                    derivative, 6);
             }
             else
             {
@@ -137,7 +137,7 @@ public class VRPlayer : MonoBehaviour
                                                     terrainTool._targetTerrain.transform.position.y,
                                                     position.z),
                                                     Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
-                                                    derivative, 1f, 2);
+                                                    derivative, 2);
             }
         }
 
