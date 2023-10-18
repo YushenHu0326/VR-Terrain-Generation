@@ -4,41 +4,13 @@ using UnityEngine;
 
 public sealed class TerrainTool : MonoBehaviour
 {
-    public enum TerrainModificationAction
-    {
-        Raise,
-        Lower,
-        Flatten,
-        Sample,
-        SampleAverage,
-    }
-
-    public int brushWidth = 200;
-    public int brushHeight = 200;
-
-    public TerrainModificationAction modificationAction;
 
     public Terrain _targetTerrain;
     private float[,] virtualHeights;
     private float[,] alphas;
-    public float terrainOffset = 50f;
+    public float terrainOffset = 0f;
 
     private float _sampledHeight;
-
-    public void OnActionChange(int value)
-    {
-        if (value == 0) modificationAction = TerrainModificationAction.Raise;
-        else if (value == 1) modificationAction = TerrainModificationAction.Lower;
-        else if (value == 2) modificationAction = TerrainModificationAction.Flatten;
-        else if (value == 3) modificationAction = TerrainModificationAction.Sample;
-        else if (value == 4) modificationAction = TerrainModificationAction.SampleAverage;
-    }
-
-    public void OnSizeChange(float size)
-    {
-        brushWidth = (int) (500f * size);
-        brushHeight = (int) (500f * size);
-    }
 
     private void Start()
     {

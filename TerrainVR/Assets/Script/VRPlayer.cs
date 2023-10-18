@@ -6,9 +6,6 @@ using UnityEngine.XR;
 
 public class VRPlayer : MonoBehaviour
 {
-    public GameObject leftController;
-    public GameObject rightController;
-
     private Stroke stroke;
     private List<Stroke> strokes;
     private GameObject surface;
@@ -25,15 +22,9 @@ public class VRPlayer : MonoBehaviour
 
     Texture2D userInput;
 
-    private bool leftPrimaryButtonPressed_f,
-                 rightPrimaryButtonPressed_f,
-                 leftSecondaryButtonPressed_f,
-                 rightSecondaryButtonPressed_f,
-                 leftTriggerButtonPressed_f,
-                 rightTriggerButtonPressed_f;
+    private bool leftHandPinchBegin, rightHandPinchBegin;
 
-    private InputDevice leftDevice;
-    private InputDevice rightDevice;
+    private GestureDetector gestureDetector;
 
     private TerrainTool terrainTool;
 
@@ -240,17 +231,7 @@ public class VRPlayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        List<InputDevice> leftDevices = new List<InputDevice>();
-        InputDevices.GetDevicesWithCharacteristics(
-            InputDeviceCharacteristics.Left | InputDeviceCharacteristics.Controller, leftDevices);
-
-        if (leftDevices.Count > 0) leftDevice = leftDevices[0];
-
-        List<InputDevice> rightDevices = new List<InputDevice>();
-        InputDevices.GetDevicesWithCharacteristics(
-            InputDeviceCharacteristics.Right | InputDeviceCharacteristics.Controller, rightDevices);
-
-        if (rightDevices.Count > 0) rightDevice = rightDevices[0];
+        gestureDetector = FindObjectOfType<GestureDetector>();
 
         terrainTool = FindObjectOfType<TerrainTool>();
 
@@ -267,126 +248,58 @@ public class VRPlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        leftDevice.TryGetFeatureValue(CommonUsages.primaryButton, out bool leftPrimaryButtonPressed);
-        rightDevice.TryGetFeatureValue(CommonUsages.primaryButton, out bool rightPrimaryButtonPressed);
+        if (gestureDetector == null) return;
 
-        leftDevice.TryGetFeatureValue(CommonUsages.secondaryButton, out bool leftSecondaryButtonPressed);
-        rightDevice.TryGetFeatureValue(CommonUsages.secondaryButton, out bool rightSecondaryButtonPressed);
-
-        leftDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool leftTriggerButtonPressed);
-        rightDevice.TryGetFeatureValue(CommonUsages.triggerButton, out bool rightTriggerButtonPressed);
-
-        if (leftTriggerButtonPressed)
+        if (gestureDetector.leftHandPinching)
         {
-            if (!leftTriggerButtonPressed_f)
+            if (!leftHandPinchBegin)
             {
-                leftTriggerButtonPressed_f = true;
+                leftHandPinchBegin = true;
 
-                OnFirstInput(leftController.transform.position, 0);
+                OnFirstInput(gestureDetector.leftHandPos, 0);
             }
 
-            if (rightTriggerButtonPressed_f)
+            if (rightHandPinchBegin)
             {
-                OnBothEditingStroke(leftController.transform.position, rightController.transform.position);
+                OnBothEditingStroke(gestureDetector.leftHandPos, gestureDetector.rightHandPos);
             }
             else
             {
-                OnInput(leftController.transform.position, 0);
+                OnInput(gestureDetector.leftHandPos, 0);
             }
         }
         else
         {
-            if (leftTriggerButtonPressed_f)
+            if (leftHandPinchBegin)
             {
-                leftTriggerButtonPressed_f = false;
+                leftHandPinchBegin = false;
 
-                if (!rightTriggerButtonPressed_f)
+                if (!rightHandPinchBegin)
                     OnFinishingInput();
             }
         }
 
-        if (rightTriggerButtonPressed)
+        if (gestureDetector.rightHandPinching)
         {
-            if (!rightTriggerButtonPressed_f)
+            if (!rightHandPinchBegin)
             {
-                rightTriggerButtonPressed_f = true;
+                rightHandPinchBegin = true;
 
-                OnFirstInput(rightController.transform.position, 1);
+                OnFirstInput(gestureDetector.rightHandPos, 1);
             }
 
-            if (!leftTriggerButtonPressed_f)
-                OnInput(rightController.transform.position, 1);
+            if (!leftHandPinchBegin)
+                OnInput(gestureDetector.rightHandPos, 1);
         }
         else
         {
-            if (rightTriggerButtonPressed_f)
+            if (rightHandPinchBegin)
             {
-                rightTriggerButtonPressed_f = false;
+                rightHandPinchBegin = false;
 
-                if (!leftTriggerButtonPressed_f)
+                if (!leftHandPinchBegin)
                     OnFinishingInput();
             }
-        }
-
-        if (leftPrimaryButtonPressed)
-        {
-            if (!leftPrimaryButtonPressed_f)
-            {
-                leftPrimaryButtonPressed_f = true;
-            }
-        }
-        else
-        {
-            if (leftPrimaryButtonPressed_f)
-                leftPrimaryButtonPressed_f = false;
-        }
-
-        if (leftSecondaryButtonPressed)
-        {
-            if (!leftSecondaryButtonPressed_f)
-            {
-                leftSecondaryButtonPressed_f = true;
-            }
-        }
-        else
-        {
-            if (leftSecondaryButtonPressed_f)
-                leftSecondaryButtonPressed_f = false;
-        }
-
-        if (rightPrimaryButtonPressed)
-        {
-            if (!rightPrimaryButtonPressed_f)
-            {
-                rightPrimaryButtonPressed_f = true;
-
-                ClearInput();
-            }
-        }
-        else
-        {
-            if (rightPrimaryButtonPressed_f)
-                rightPrimaryButtonPressed_f = false;
-        }
-
-        if (rightSecondaryButtonPressed)
-        {
-            if (!rightSecondaryButtonPressed_f)
-            {
-                rightSecondaryButtonPressed_f = true;
-
-                filled = !filled;
-            }
-            /*
-            byte[] bytes = userInput.EncodeToPNG();
-
-            System.IO.File.WriteAllBytes(Application.dataPath + "/i.png", bytes);
-            */
-        }
-        else
-        {
-            if (rightSecondaryButtonPressed_f)
-                rightSecondaryButtonPressed_f = false;
         }
     }
 }

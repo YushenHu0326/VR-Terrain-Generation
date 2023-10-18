@@ -67,7 +67,7 @@ MonoBehaviour:
   brushHeight: 200
   modificationAction: 0
   _targetTerrain: {fileID: 0}
-  terrainOffset: 50
+  terrainOffset: 0
 --- !u!114 &904725421917684284
 MonoBehaviour:
   m_ObjectHideFlags: 0
