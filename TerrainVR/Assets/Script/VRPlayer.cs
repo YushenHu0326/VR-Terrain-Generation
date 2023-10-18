@@ -32,6 +32,7 @@ public class VRPlayer : MonoBehaviour
 
     void OnStartDrawing(Vector3 position)
     {
+        Debug.Log("2");
         stroke = new GameObject("Stroke").AddComponent<Stroke>();
         stroke.CreateStroke(position, leftBrushSize, rightBrushSize, filled);
         strokes.Add(stroke);
@@ -182,6 +183,7 @@ public class VRPlayer : MonoBehaviour
 
         foreach (Stroke s in strokes)
         {
+            if (s == null) continue;
             if (controllerIndex == 0)
             {
                 leftEditingIndex = s.LocateEditingIndex(position);
@@ -230,7 +232,7 @@ public class VRPlayer : MonoBehaviour
                 else
                     filled = !filled;
 
-                Destroy(stroke.gameObject);
+                stroke.DestroyStroke();
             }
             else
             {
