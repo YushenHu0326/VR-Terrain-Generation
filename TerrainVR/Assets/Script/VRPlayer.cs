@@ -50,7 +50,7 @@ public class VRPlayer : MonoBehaviour
         Vector3 position, derivative;
         float offset, brushSize;
 
-        if (filled)
+        if (s.filled)
         {
             for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
             {
@@ -83,14 +83,14 @@ public class VRPlayer : MonoBehaviour
             offset = position.y - terrainTool._targetTerrain.transform.position.y;
             brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
 
-            if (filled)
+            if (s.filled)
             {
                 terrainTool.RaiseTerrain(new Vector3(position.x,
                                                      terrainTool._targetTerrain.transform.position.y,
                                                      position.z),
                                                      Mathf.Abs(offset) / 2f, brushSize / 2f,
-                                                     Mathf.Max(leftBrushSize, rightBrushSize),
-                                                     Mathf.Max(leftBrushSize, rightBrushSize),
+                                                     Mathf.Max(leftBrushSize, rightBrushSize) / 2f,
+                                                     Mathf.Max(leftBrushSize, rightBrushSize) / 2f,
                                                      derivative);
             }
             else
@@ -110,25 +110,37 @@ public class VRPlayer : MonoBehaviour
             if (i == 0) derivative = s.GetPosition(i + 1) - s.GetPosition(i);
             else if (i == s.GetComponent<LineRenderer>().positionCount - 1) derivative = s.GetPosition(i) - s.GetPosition(i - 1);
             else derivative = s.GetPosition(i + 1) - s.GetPosition(i - 1);
+            derivative = Vector3.Normalize(derivative);
 
             offset = position.y - terrainTool._targetTerrain.transform.position.y;
             brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
 
-            if (filled)
+            if (s.filled)
             {
                 terrainTool.PaintStroke(new Vector3(position.x,
                                                     terrainTool._targetTerrain.transform.position.y,
                                                     position.z),
                                                     Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
-                                                    derivative, 6);
+                                                    0.6f, 6);
             }
             else
             {
-                terrainTool.PaintStroke(new Vector3(position.x,
-                                                    terrainTool._targetTerrain.transform.position.y,
-                                                    position.z),
-                                                    Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
-                                                    derivative, 2);
+                if (Mathf.Abs(derivative.normalized.y) < 0.15f)
+                {
+                    terrainTool.PaintStroke(new Vector3(position.x,
+                                                        terrainTool._targetTerrain.transform.position.y,
+                                                        position.z),
+                                                        Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
+                                                        1f, 2);
+                }
+                else if (Mathf.Abs(derivative.normalized.y) > 0.8f)
+                {
+                    terrainTool.PaintStroke(new Vector3(position.x,
+                                                        terrainTool._targetTerrain.transform.position.y,
+                                                        position.z),
+                                                        Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
+                                                        0.6f, 2);
+                }
             }
         }
 
@@ -201,7 +213,7 @@ public class VRPlayer : MonoBehaviour
         else OnDrawing(position);
     }
 
-    public void OnFinishingInput()
+    public void OnFinishingInput(int controllerIndex)
     {
         if (editing)
         {
@@ -211,7 +223,19 @@ public class VRPlayer : MonoBehaviour
         }
         else
         {
-            OnFinishingDrawing(stroke);
+            if (stroke.Volume() < 50f)
+            {
+                if (controllerIndex == 0)
+                    ClearInput();
+                else
+                    filled = !filled;
+
+                Destroy(stroke.gameObject);
+            }
+            else
+            {
+                OnFinishingDrawing(stroke);
+            }
         }
 
         editing = false;
@@ -275,7 +299,7 @@ public class VRPlayer : MonoBehaviour
                 leftHandPinchBegin = false;
 
                 if (!rightHandPinchBegin)
-                    OnFinishingInput();
+                    OnFinishingInput(0);
             }
         }
 
@@ -298,7 +322,7 @@ public class VRPlayer : MonoBehaviour
                 rightHandPinchBegin = false;
 
                 if (!leftHandPinchBegin)
-                    OnFinishingInput();
+                    OnFinishingInput(1);
             }
         }
     }

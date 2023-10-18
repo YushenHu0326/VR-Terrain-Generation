@@ -13,7 +13,9 @@ public class Stroke : MonoBehaviour
 
     private float leftBrushSize = 1f;
     private float rightBrushSize = 1f;
-    private bool filled;
+    public bool filled;
+
+    private float xMin, xMax, yMin, yMax, zMax, zMin;
 
     private GameObject surface;
 
@@ -32,6 +34,13 @@ public class Stroke : MonoBehaviour
 
         lineRenderer.startColor = Color.red;
         lineRenderer.endColor = Color.red;
+
+        xMin = position.x;
+        xMax = position.x;
+        yMin = position.y;
+        yMax = position.y;
+        zMin = position.z;
+        zMax = position.z;
 
         if (filled)
         {
@@ -52,6 +61,13 @@ public class Stroke : MonoBehaviour
             lineRenderer.positionCount = strokeIndex + 1;
             lineRenderer.SetPosition(strokeIndex, position);
             strokeIndex++;
+
+            if (position.x < xMin) xMin = position.x;
+            if (position.x > xMax) xMax = position.x;
+            if (position.y < yMin) yMin = position.y;
+            if (position.y > yMax) yMax = position.y;
+            if (position.z < zMin) zMin = position.z;
+            if (position.z > zMax) zMax = position.z;
 
             if (filled)
             {
@@ -200,6 +216,11 @@ public class Stroke : MonoBehaviour
                 }
             }
         }
+    }
+
+    public float Volume()
+    {
+        return (xMax - xMin) * (yMax - yMin) * (zMax - zMin);
     }
 
     public void DestroyStroke()
