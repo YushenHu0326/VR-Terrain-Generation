@@ -104,7 +104,7 @@ public class Stroke : MonoBehaviour
         if (Vector3.Distance(position, positions[positions.Count - 1]) < 20f) return positions.Count - 1;
 
         for (int i = 0; i < positions.Count; i++)
-            if (Vector3.Distance(position, positions[i]) < 5f)
+            if (Vector3.Distance(position, positions[i]) < 10f)
                 return i;
 
         return -1;
