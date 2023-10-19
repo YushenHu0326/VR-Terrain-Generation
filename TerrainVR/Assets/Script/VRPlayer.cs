@@ -20,6 +20,8 @@ public class VRPlayer : MonoBehaviour
     private int leftEditingIndex;
     private int rightEditingIndex;
 
+    private int activeHand;
+
     Texture2D userInput;
 
     private bool leftHandPinchBegin, rightHandPinchBegin;
@@ -32,7 +34,6 @@ public class VRPlayer : MonoBehaviour
 
     void OnStartDrawing(Vector3 position)
     {
-        Debug.Log("2");
         stroke = new GameObject("Stroke").AddComponent<Stroke>();
         stroke.CreateStroke(position, leftBrushSize, rightBrushSize, filled);
         strokes.Add(stroke);
@@ -206,13 +207,32 @@ public class VRPlayer : MonoBehaviour
             }
         }
 
-        if (!editing) OnStartDrawing(position);
+        if (!editing && !(leftHandPinchBegin && rightHandPinchBegin))
+        {
+            activeHand = controllerIndex;
+            OnStartDrawing(position);
+        }
     }
 
-    public void OnInput(Vector3 position, int controllerIndex)
+    public void OnSingleInput(Vector3 position, int controllerIndex)
     {
         if (editing) OnSingleEditingStroke(position, controllerIndex);
         else OnDrawing(position);
+    }
+
+    public void OnBothInput(Vector3 leftPosition, Vector3 rightPosition)
+    {
+        if (editing)
+        {
+            OnBothEditingStroke(leftPosition, rightPosition);
+        }
+        else
+        {
+            if (activeHand == 0)
+                OnDrawing(leftPosition);
+            else
+                OnDrawing(rightPosition);
+        }
     }
 
     public void OnFinishingInput(int controllerIndex)
@@ -287,11 +307,11 @@ public class VRPlayer : MonoBehaviour
 
             if (rightHandPinchBegin)
             {
-                OnBothEditingStroke(gestureDetector.leftHandPos, gestureDetector.rightHandPos);
+                OnBothInput(gestureDetector.leftHandPos, gestureDetector.rightHandPos);
             }
             else
             {
-                OnInput(gestureDetector.leftHandPos, 0);
+                OnSingleInput(gestureDetector.leftHandPos, 0);
             }
         }
         else
@@ -315,7 +335,7 @@ public class VRPlayer : MonoBehaviour
             }
 
             if (!leftHandPinchBegin)
-                OnInput(gestureDetector.rightHandPos, 1);
+                OnSingleInput(gestureDetector.rightHandPos, 1);
         }
         else
         {

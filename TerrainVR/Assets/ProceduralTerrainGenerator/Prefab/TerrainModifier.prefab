@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 8150113172363373395}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 629.2063, y: 440.6877, z: 197.79686}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -63,9 +63,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70335d8a893014b4aac66dad021e302d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  brushWidth: 200
-  brushHeight: 200
-  modificationAction: 0
   _targetTerrain: {fileID: 0}
   terrainOffset: 0
 --- !u!114 &904725421917684284
