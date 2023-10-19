@@ -18,6 +18,10 @@ public class Stroke : MonoBehaviour
     private float xMin, xMax, yMin, yMax, zMax, zMin;
 
     private GameObject surface;
+    private GameObject slopeVisualCue;
+    private int slopeIndex;
+
+    private Terrain terrain;
 
     public void CreateStroke(Vector3 position, float leftBrushSize, float rightBrushSize, bool filled)
     {
@@ -50,6 +54,8 @@ public class Stroke : MonoBehaviour
             surface.GetComponent<MeshFilter>().mesh = new Mesh();
             surface.GetComponent<MeshRenderer>().material = new Material(Shader.Find("Sprites/Default"));
         }
+
+        terrain = FindObjectOfType<Terrain>();
     }
 
     public void DrawStroke(Vector3 position)
@@ -104,8 +110,87 @@ public class Stroke : MonoBehaviour
         return -1;
     }
 
+    public void OnStartEditing(int index)
+    {
+        if (index < 0 || index >= positions.Count) return;
+
+        slopeVisualCue = new GameObject("VisualCue");
+        slopeVisualCue.AddComponent<LineRenderer>();
+        slopeVisualCue.GetComponent<LineRenderer>().material = new Material(Shader.Find("Sprites/Default"));
+        slopeVisualCue.GetComponent<LineRenderer>().startColor = Color.red;
+        slopeVisualCue.GetComponent<LineRenderer>().endColor = Color.red;
+
+        slopeVisualCue.GetComponent<LineRenderer>().positionCount = 3;
+
+        slopeIndex = index;
+    }
+
+    public void OnFinishEditing()
+    {
+        Destroy(slopeVisualCue);
+    }
+
     public void EditStroke(Vector3 leftPosition, Vector3 rightPosition, int leftIndex, int rightIndex)
     {
+        if (terrain == null) return;
+
+        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(1, positions[slopeIndex]);
+
+        Vector3 derivative;
+        if (slopeIndex == 0) derivative = positions[slopeIndex + 1] - positions[slopeIndex];
+        else if (slopeIndex == positions.Count - 1) derivative = positions[slopeIndex] - positions[slopeIndex - 1];
+        else derivative = positions[slopeIndex + 1] - positions[slopeIndex - 1];
+
+        Vector3 leftEnd = positions[slopeIndex] + (Quaternion.AngleAxis(-90, Vector3.up) * derivative.normalized) *
+                          (positions[slopeIndex].y - terrain.gameObject.transform.position.y) * leftBrushSize;
+        Vector3 rightEnd = positions[slopeIndex] + (Quaternion.AngleAxis(90, Vector3.up) * derivative.normalized) *
+                          (positions[slopeIndex].y - terrain.gameObject.transform.position.y) * rightBrushSize;
+        leftEnd.y = terrain.gameObject.transform.position.y;
+        rightEnd.y = terrain.gameObject.transform.position.y;
+        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(0, leftEnd);
+        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(2, rightEnd);
+
+        if (leftIndex <= -100)
+        {
+            if (leftIndex == -100)
+            {
+                Vector3 d = leftPosition - positions[slopeIndex];
+                d.y = 0f;
+                leftBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
+                leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 5f);
+            }
+            else if (leftIndex == -101)
+            {
+                Vector3 d = leftPosition - positions[slopeIndex];
+                d.y = 0f;
+                rightBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
+                rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 5f);
+            }
+
+            return;
+        }
+        else if (rightIndex <= -100)
+        {
+            if (rightIndex == -100)
+            {
+                Vector3 d = rightPosition - positions[slopeIndex];
+                d.y = 0f;
+                leftBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
+                leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 5f);
+            }
+            else if (rightIndex == -101)
+            {
+                Vector3 d = rightPosition - positions[slopeIndex];
+                d.y = 0f;
+                rightBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
+                rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 5f);
+            }
+
+            return;
+        }
+
+        if (leftIndex < 0 && rightIndex < 0) return;
+
         if (rightIndex < 0)
         {
             Vector3 d = leftPosition - positions[leftIndex];
@@ -232,5 +317,20 @@ public class Stroke : MonoBehaviour
     public Vector3 GetPosition(int i)
     {
         return positions[i];
+    }
+
+    public float GetLeftBrushSize()
+    {
+        return leftBrushSize;
+    }
+
+    public float GetRightBrushSize()
+    {
+        return rightBrushSize;
+    }
+
+    public int GetPositionCount()
+    {
+        return positions.Count;
     }
 }

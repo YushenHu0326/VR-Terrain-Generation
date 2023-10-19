@@ -91,8 +91,8 @@ public class VRPlayer : MonoBehaviour
                                                      terrainTool._targetTerrain.transform.position.y,
                                                      position.z),
                                                      Mathf.Abs(offset) / 2f, brushSize / 2f,
-                                                     Mathf.Max(leftBrushSize, rightBrushSize) / 2f,
-                                                     Mathf.Max(leftBrushSize, rightBrushSize) / 2f,
+                                                     Mathf.Max(s.GetLeftBrushSize(), s.GetRightBrushSize()) / 2f,
+                                                     Mathf.Max(s.GetLeftBrushSize(), s.GetRightBrushSize()) / 2f,
                                                      derivative);
             }
             else
@@ -100,7 +100,7 @@ public class VRPlayer : MonoBehaviour
                 terrainTool.RaiseTerrain(new Vector3(position.x,
                                                      terrainTool._targetTerrain.transform.position.y,
                                                      position.z),
-                                                     Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
+                                                     Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                      derivative);
             }
         }
@@ -122,7 +122,7 @@ public class VRPlayer : MonoBehaviour
                 terrainTool.PaintStroke(new Vector3(position.x,
                                                     terrainTool._targetTerrain.transform.position.y,
                                                     position.z),
-                                                    Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
+                                                    Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                     0.6f, 6);
             }
             else
@@ -132,7 +132,7 @@ public class VRPlayer : MonoBehaviour
                     terrainTool.PaintStroke(new Vector3(position.x,
                                                         terrainTool._targetTerrain.transform.position.y,
                                                         position.z),
-                                                        Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
+                                                        Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                         1f, 2);
                 }
                 else if (Mathf.Abs(derivative.normalized.y) > 0.8f)
@@ -140,7 +140,7 @@ public class VRPlayer : MonoBehaviour
                     terrainTool.PaintStroke(new Vector3(position.x,
                                                         terrainTool._targetTerrain.transform.position.y,
                                                         position.z),
-                                                        Mathf.Abs(offset), brushSize, leftBrushSize, rightBrushSize,
+                                                        Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                         0.6f, 2);
                 }
             }
@@ -172,11 +172,43 @@ public class VRPlayer : MonoBehaviour
         {
             if (controllerIndex == 0)
             {
-                leftEditingIndex = stroke.LocateEditingIndex(position);
+                Vector3 derivative;
+                if (rightEditingIndex == 0) derivative = stroke.GetPosition(rightEditingIndex + 1) - stroke.GetPosition(rightEditingIndex);
+                else if (rightEditingIndex == stroke.GetPositionCount() - 1) derivative = stroke.GetPosition(rightEditingIndex) - stroke.GetPosition(rightEditingIndex - 1);
+                else derivative = stroke.GetPosition(rightEditingIndex + 1) - stroke.GetPosition(rightEditingIndex - 1);
+
+                float angle  = Vector3.Angle(derivative.normalized, (stroke.GetPosition(rightEditingIndex) - position).normalized) *
+                                             Mathf.Sign(derivative.normalized.x * (stroke.GetPosition(rightEditingIndex) - position).normalized.z 
+                                             - derivative.normalized.z * (stroke.GetPosition(rightEditingIndex) - position).normalized.x);
+
+                angle /= 180f;
+
+                if (angle > -0.55f && angle < -0.45f)
+                    leftEditingIndex = -100;
+                else if (angle < 0.55f && angle > 0.45f)
+                    leftEditingIndex = -101;
+                else
+                    leftEditingIndex = stroke.LocateEditingIndex(position);
             }
             else
             {
-                rightEditingIndex = stroke.LocateEditingIndex(position);
+                Vector3 derivative;
+                if (leftEditingIndex == 0) derivative = stroke.GetPosition(leftEditingIndex + 1) - stroke.GetPosition(leftEditingIndex);
+                else if (leftEditingIndex == stroke.GetPositionCount() - 1) derivative = stroke.GetPosition(leftEditingIndex) - stroke.GetPosition(leftEditingIndex - 1);
+                else derivative = stroke.GetPosition(leftEditingIndex + 1) - stroke.GetPosition(leftEditingIndex - 1);
+
+                float angle = Vector3.Angle(derivative.normalized, (stroke.GetPosition(leftEditingIndex) - position).normalized) *
+                                             Mathf.Sign(derivative.normalized.x * (stroke.GetPosition(leftEditingIndex) - position).normalized.z
+                                             - derivative.normalized.z * (stroke.GetPosition(leftEditingIndex) - position).normalized.x);
+
+                angle /= 180f;
+
+                if ((angle > -0.55f && angle < -0.45f) && position.y < stroke.GetPosition(leftEditingIndex).y)
+                    rightEditingIndex = -100;
+                else if ((angle < 0.55f && angle > 0.45f) && position.y < stroke.GetPosition(leftEditingIndex).y)
+                    rightEditingIndex = -101;
+                else
+                    rightEditingIndex = stroke.LocateEditingIndex(position);
             }
 
             return;
@@ -192,6 +224,7 @@ public class VRPlayer : MonoBehaviour
                 {
                     stroke = s;
                     editing = true;
+                    stroke.OnStartEditing(leftEditingIndex);
                     break;
                 }
             }
@@ -202,6 +235,7 @@ public class VRPlayer : MonoBehaviour
                 {
                     stroke = s;
                     editing = true;
+                    stroke.OnStartEditing(rightEditingIndex);
                     break;
                 }
             }
@@ -239,6 +273,7 @@ public class VRPlayer : MonoBehaviour
     {
         if (editing)
         {
+            stroke.OnFinishEditing();
             terrainTool.ClearTerrain();
             foreach (Stroke s in strokes)
                 OnFinishingDrawing(s);

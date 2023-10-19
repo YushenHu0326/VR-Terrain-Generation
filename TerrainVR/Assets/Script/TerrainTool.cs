@@ -83,6 +83,7 @@ public sealed class TerrainTool : MonoBehaviour
         Vector3 direction = new Vector3(derivative.x, 0f, derivative.z);
         Vector3 deviation = new Vector3(0f, 0f, 0f);
         float angle = 0f;
+        float angleTemp;
 
         for (var y = 0; y < brushSize.y; y++)
         {
@@ -94,6 +95,8 @@ public sealed class TerrainTool : MonoBehaviour
                 angle = Vector3.Angle(direction.normalized, deviation.normalized) * 
                                       Mathf.Sign(direction.normalized.x * deviation.normalized.z - direction.normalized.z * deviation.normalized.x);
                 angle /= 180f;
+
+                angleTemp = angle;
 
                 if (angle < -0.5f) angle = 1f - (-angle - 0.5f);
                 else if (angle < 0.5f && angle >= -0.5f) angle = 1f - (angle + 0.5f);
@@ -117,8 +120,16 @@ public sealed class TerrainTool : MonoBehaviour
                 if (virtualHeights[y + brushPosition.y, x + brushPosition.x] - terrainOffset / terrainData.size.y < distance * (height - terrainOffset) / terrainData.size.y)
                     virtualHeights[y + brushPosition.y, x + brushPosition.x] = distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y;
 
-                if (alphas[y + brushPosition.y, x + brushPosition.x] < 1f)
+                if (alphas[y + brushPosition.y, x + brushPosition.x] < 0.5f)
                     alphas[y + brushPosition.y, x + brushPosition.x] = 0.3f;
+
+                if (leftBrushSize < 0.5f && (angleTemp < 0.7f && angleTemp > 0.3f))
+                    if (alphas[y + brushPosition.y, x + brushPosition.x] < 1f)
+                        alphas[y + brushPosition.y, x + brushPosition.x] = 0.6f;
+
+                if (rightBrushSize < 0.5f && (angleTemp > -0.7f && angleTemp < -0.3f))
+                    if (alphas[y + brushPosition.y, x + brushPosition.x] < 1f)
+                        alphas[y + brushPosition.y, x + brushPosition.x] = 0.6f;
             }
         }
     }
@@ -140,61 +151,6 @@ public sealed class TerrainTool : MonoBehaviour
                 if (y >= brushSize.y / 2 - width && y <= brushSize.y / 2 + width)
                     if (x >= brushSize.x / 2 - width && x <= brushSize.x / 2 + width)
                         alphas[y + brushPosition.y, x + brushPosition.x] = value;
-            }
-        }
-    }
-
-
-    public void LowerTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative)
-    {
-        int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
-
-        var brushPosition = GetBrushPosition(worldPosition, maxBrushSize, maxBrushSize);
-
-        var brushSize = GetSafeBrushSize(brushPosition.x, brushPosition.y, maxBrushSize, maxBrushSize);
-
-        var terrainData = GetTerrainData();
-
-        Vector3 direction = new Vector3(derivative.x, 0f, derivative.z);
-        Vector3 deviation = new Vector3(0f, 0f, 0f);
-        float angle = 0f;
-
-        for (var y = 0; y < brushSize.y; y++)
-        {
-            for (var x = 0; x < brushSize.x; x++)
-            {
-                deviation.x = (float)(x - brushSize.x / 2);
-                deviation.z = (float)(y - brushSize.y / 2);
-
-                angle = Vector3.Angle(direction.normalized, deviation.normalized) *
-                                      Mathf.Sign(direction.normalized.x * deviation.normalized.z - direction.normalized.z * deviation.normalized.x);
-                angle /= 180f;
-
-                if (angle < -0.5f) angle = 1f - (-angle - 0.5f);
-                else if (angle < 0.5f && angle >= -0.5f) angle = 1f - (angle + 0.5f);
-                else angle = angle - 0.5f;
-
-                float distance = Mathf.Sqrt(Mathf.Pow((float)x - (float)brushSize.x / 2f, 2f) +
-                                            Mathf.Pow((float)y - (float)brushSize.y / 2f, 2f));
-                distance /= (float)brushSize.x / 2f;
-                distance *= distance;
-                distance = Mathf.Clamp(distance, 0f, 1f);
-                distance = 1f - distance;
-
-                if (leftBrushSize < rightBrushSize)
-                {
-                    distance = Mathf.Lerp(distance * leftBrushSize / rightBrushSize, distance, angle);
-                }
-                else
-                {
-                    distance = Mathf.Lerp(distance * rightBrushSize / leftBrushSize, distance, angle);
-                }
-                
-                if (virtualHeights[y + brushPosition.y, x + brushPosition.x] > (terrainOffset - distance * (terrainOffset - height)) / terrainData.size.y)
-                    virtualHeights[y + brushPosition.y, x + brushPosition.x] = (terrainOffset - distance * (terrainOffset - height)) / terrainData.size.y;
-
-                if (angle < 0.7f && angle > 0.3f)
-                    alphas[y + brushPosition.y, x + brushPosition.x] = 0.6f;
             }
         }
     }
