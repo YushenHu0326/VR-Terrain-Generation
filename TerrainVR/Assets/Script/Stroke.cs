@@ -134,6 +134,8 @@ public class Stroke : MonoBehaviour
     {
         if (terrain == null) return;
 
+        if (leftIndex < 0 && rightIndex < 0) return;
+
         slopeVisualCue.GetComponent<LineRenderer>().SetPosition(1, positions[slopeIndex]);
 
         Vector3 derivative;
@@ -166,10 +168,9 @@ public class Stroke : MonoBehaviour
                 rightBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
                 rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 5f);
             }
-
-            return;
         }
-        else if (rightIndex <= -100)
+
+        if (rightIndex <= -100)
         {
             if (rightIndex == -100)
             {
@@ -188,8 +189,6 @@ public class Stroke : MonoBehaviour
 
             return;
         }
-
-        if (leftIndex < 0 && rightIndex < 0) return;
 
         if (rightIndex < 0)
         {
