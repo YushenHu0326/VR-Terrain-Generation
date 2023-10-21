@@ -20,6 +20,16 @@ public class GestureDetector : MonoBehaviour
     {
         //fingerBones = new List<OVRBone>(skeleton.Bones);
         rig = FindObjectOfType<OVRCameraRig>();
+
+        StartCoroutine(AddOutline());
+    }
+
+    IEnumerator AddOutline()
+    {
+        yield return new WaitForSeconds(3);
+
+        rightHand.gameObject.AddComponent<Outline>();
+        leftHand.gameObject.AddComponent<Outline>();
     }
 
     // Update is called once per frame

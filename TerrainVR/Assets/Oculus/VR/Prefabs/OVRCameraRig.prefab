@@ -329,8 +329,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   leftBrushSize: 1
   rightBrushSize: 1
-  visualCuePrefab: {fileID: 4184557145053080593, guid: 50b38eb5f89ae7541abfd83674218cf3,
-    type: 3}
+  strokeMat: {fileID: 2100000, guid: 311313efa011949e98b6761d652ad13c, type: 2}
 --- !u!1 &100006
 GameObject:
   m_ObjectHideFlags: 0

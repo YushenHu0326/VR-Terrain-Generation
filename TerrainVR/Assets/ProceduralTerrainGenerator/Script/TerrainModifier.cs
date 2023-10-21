@@ -112,7 +112,7 @@ public class TerrainModifier : MonoBehaviour
 
                 r *= (n + 1f);
 
-                if (r < 0.3f)
+                if (r < 0.5f)
                 {
                     r = 0f;
                 }

@@ -23,7 +23,7 @@ public class Stroke : MonoBehaviour
 
     private Terrain terrain;
 
-    public void CreateStroke(Vector3 position, float leftBrushSize, float rightBrushSize, bool filled)
+    public void CreateStroke(Material mat, Vector3 position, float leftBrushSize, float rightBrushSize, bool filled)
     {
         positions = new List<Vector3>();
         strokeIndex = 0;
@@ -34,10 +34,9 @@ public class Stroke : MonoBehaviour
         this.filled = filled;
 
         lineRenderer = gameObject.AddComponent<LineRenderer>();
-        lineRenderer.material = new Material(Shader.Find("Sprites/Default"));
+        lineRenderer.material = mat;
 
-        lineRenderer.startColor = Color.red;
-        lineRenderer.endColor = Color.red;
+        lineRenderer.material.SetColor("_OutlineColor", Color.red);
 
         xMin = position.x;
         xMax = position.x;
@@ -116,9 +115,8 @@ public class Stroke : MonoBehaviour
 
         slopeVisualCue = new GameObject("VisualCue");
         slopeVisualCue.AddComponent<LineRenderer>();
-        slopeVisualCue.GetComponent<LineRenderer>().material = new Material(Shader.Find("Sprites/Default"));
-        slopeVisualCue.GetComponent<LineRenderer>().startColor = Color.red;
-        slopeVisualCue.GetComponent<LineRenderer>().endColor = Color.red;
+        slopeVisualCue.GetComponent<LineRenderer>().material = lineRenderer.material;
+        slopeVisualCue.GetComponent<LineRenderer>().material.SetColor("_OutlineColor", Color.blue);
 
         slopeVisualCue.GetComponent<LineRenderer>().positionCount = 3;
 

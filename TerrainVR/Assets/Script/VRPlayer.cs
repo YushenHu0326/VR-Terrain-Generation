@@ -17,6 +17,8 @@ public class VRPlayer : MonoBehaviour
     public float leftBrushSize = 1f;
     public float rightBrushSize = 1f;
 
+    public Material strokeMat;
+
     private int leftEditingIndex;
     private int rightEditingIndex;
 
@@ -35,7 +37,7 @@ public class VRPlayer : MonoBehaviour
     void OnStartDrawing(Vector3 position)
     {
         stroke = new GameObject("Stroke").AddComponent<Stroke>();
-        stroke.CreateStroke(position, leftBrushSize, rightBrushSize, filled);
+        stroke.CreateStroke(strokeMat, position, leftBrushSize, rightBrushSize, filled);
         strokes.Add(stroke);
     }
 
