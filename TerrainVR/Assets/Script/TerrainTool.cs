@@ -83,7 +83,6 @@ public sealed class TerrainTool : MonoBehaviour
         Vector3 direction = new Vector3(derivative.x, 0f, derivative.z);
         Vector3 deviation = new Vector3(0f, 0f, 0f);
         float angle = 0f;
-        float angleTemp;
 
         for (var y = 0; y < brushSize.y; y++)
         {
@@ -95,8 +94,6 @@ public sealed class TerrainTool : MonoBehaviour
                 angle = Vector3.Angle(direction.normalized, deviation.normalized) * 
                                       Mathf.Sign(direction.normalized.x * deviation.normalized.z - direction.normalized.z * deviation.normalized.x);
                 angle /= 180f;
-
-                angleTemp = angle;
 
                 if (angle < -0.5f) angle = 1f - (-angle - 0.5f);
                 else if (angle < 0.5f && angle >= -0.5f) angle = 1f - (angle + 0.5f);
@@ -114,27 +111,19 @@ public sealed class TerrainTool : MonoBehaviour
                 }
                 else
                 {
-                    distance = Mathf.Lerp(distance * rightBrushSize / leftBrushSize, distance, angle);
+                    distance = Mathf.Lerp(distance, distance * rightBrushSize / leftBrushSize, angle);
                 }
 
                 if (virtualHeights[y + brushPosition.y, x + brushPosition.x] - terrainOffset / terrainData.size.y < distance * (height - terrainOffset) / terrainData.size.y)
                     virtualHeights[y + brushPosition.y, x + brushPosition.x] = distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y;
 
-                if (alphas[y + brushPosition.y, x + brushPosition.x] < 0.5f)
+                if (alphas[y + brushPosition.y, x + brushPosition.x] < 0.99f)
                     alphas[y + brushPosition.y, x + brushPosition.x] = 0.3f;
-
-                if (leftBrushSize < 0.5f && (angleTemp < 0.7f && angleTemp > 0.3f))
-                    if (alphas[y + brushPosition.y, x + brushPosition.x] < 1f)
-                        alphas[y + brushPosition.y, x + brushPosition.x] = 0.6f;
-
-                if (rightBrushSize < 0.5f && (angleTemp > -0.7f && angleTemp < -0.3f))
-                    if (alphas[y + brushPosition.y, x + brushPosition.x] < 1f)
-                        alphas[y + brushPosition.y, x + brushPosition.x] = 0.6f;
             }
         }
     }
 
-    public void PaintStroke(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, float value, int width)
+    public void PaintStroke(Vector3 worldPosition, float baseBrushSize, float leftBrushSize, float rightBrushSize, float value, int width)
     {
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
 

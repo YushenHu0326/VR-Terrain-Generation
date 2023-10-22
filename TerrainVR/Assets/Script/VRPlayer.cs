@@ -124,7 +124,7 @@ public class VRPlayer : MonoBehaviour
                 terrainTool.PaintStroke(new Vector3(position.x,
                                                     terrainTool._targetTerrain.transform.position.y,
                                                     position.z),
-                                                    Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                                    brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                     0.6f, 6);
             }
             else
@@ -134,7 +134,7 @@ public class VRPlayer : MonoBehaviour
                     terrainTool.PaintStroke(new Vector3(position.x,
                                                         terrainTool._targetTerrain.transform.position.y,
                                                         position.z),
-                                                        Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                                        brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                         1f, 2);
                 }
                 else if (Mathf.Abs(derivative.normalized.y) > 0.8f)
@@ -142,8 +142,36 @@ public class VRPlayer : MonoBehaviour
                     terrainTool.PaintStroke(new Vector3(position.x,
                                                         terrainTool._targetTerrain.transform.position.y,
                                                         position.z),
-                                                        Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                                        brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                         0.6f, 2);
+                }
+
+                if (s.GetLeftBrushSize() < 0.5f)
+                {
+                    float middlePoint = (position.y - terrainTool._targetTerrain.transform.position.y) * s.GetLeftBrushSize() / 2f;
+                    if (middlePoint > 3f)
+                    {
+                        Vector3 cliff = position + (Quaternion.AngleAxis(-90, Vector3.up) * derivative.normalized) * middlePoint;
+                        terrainTool.PaintStroke(new Vector3(cliff.x,
+                                                            terrainTool._targetTerrain.transform.position.y,
+                                                            cliff.z),
+                                                            brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                                            0.6f, (int)(middlePoint - 3f));
+                    }
+                }
+
+                if (s.GetRightBrushSize() < 0.5f)
+                {
+                    float middlePoint = (position.y - terrainTool._targetTerrain.transform.position.y) * s.GetRightBrushSize() / 2f;
+                    if (middlePoint > 3f)
+                    {
+                        Vector3 cliff = position + (Quaternion.AngleAxis(90, Vector3.up) * derivative.normalized) * middlePoint;
+                        terrainTool.PaintStroke(new Vector3(cliff.x,
+                                                            terrainTool._targetTerrain.transform.position.y,
+                                                            cliff.z),
+                                                            brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                                            0.6f, (int)(middlePoint - 3f));
+                    }
                 }
             }
         }

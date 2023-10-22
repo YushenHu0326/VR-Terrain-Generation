@@ -110,9 +110,9 @@ public class TerrainModifier : MonoBehaviour
 
                 float n = Mathf.PerlinNoise((float)w / 12f, (float)h / 12f);
 
-                r *= (n + 1f);
+                r *= (n * 0.5f + 1f);
 
-                if (r < 0.5f)
+                if (r < 0.3f)
                 {
                     r = 0f;
                 }
