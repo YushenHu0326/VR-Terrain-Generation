@@ -157,14 +157,14 @@ public class Stroke : MonoBehaviour
                 Vector3 d = leftPosition - positions[slopeIndex];
                 d.y = 0f;
                 leftBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
-                leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 5f);
+                leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 2f);
             }
             else if (leftIndex == -101)
             {
                 Vector3 d = leftPosition - positions[slopeIndex];
                 d.y = 0f;
                 rightBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
-                rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 5f);
+                rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 2f);
             }
         }
 
@@ -175,14 +175,14 @@ public class Stroke : MonoBehaviour
                 Vector3 d = rightPosition - positions[slopeIndex];
                 d.y = 0f;
                 leftBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
-                leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 5f);
+                leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 2f);
             }
             else if (rightIndex == -101)
             {
                 Vector3 d = rightPosition - positions[slopeIndex];
                 d.y = 0f;
                 rightBrushSize = d.magnitude / (positions[slopeIndex].y - leftPosition.y);
-                rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 5f);
+                rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 2f);
             }
 
             return;
