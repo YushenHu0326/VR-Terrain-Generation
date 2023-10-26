@@ -305,6 +305,12 @@ public class Stroke : MonoBehaviour
         return (xMax - xMin) * (yMax - yMin) * (zMax - zMin);
     }
 
+    public void HideStroke()
+    {
+        if (surface != null) Destroy(surface);
+        lineRenderer.enabled = false;
+    }
+
     public void DestroyStroke()
     {
         if (surface != null) Destroy(surface);

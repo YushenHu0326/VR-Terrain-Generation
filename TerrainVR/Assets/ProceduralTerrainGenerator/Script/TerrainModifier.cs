@@ -237,6 +237,11 @@ public class TerrainModifier : MonoBehaviour
 
         WriteTerrainData(modifiedTex);
 
+        PaintTerrain();
+    }
+
+    public void PaintTerrain()
+    {
         GetComponent<ProceduralTerrainPainter>().PaintTerrain();
     }
 

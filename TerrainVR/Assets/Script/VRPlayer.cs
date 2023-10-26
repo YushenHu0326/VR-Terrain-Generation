@@ -33,6 +33,7 @@ public class VRPlayer : MonoBehaviour
     private TerrainTool terrainTool;
 
     private bool editing;
+    private bool visualized;
 
     void OnStartDrawing(Vector3 position)
     {
@@ -107,6 +108,16 @@ public class VRPlayer : MonoBehaviour
             }
         }
 
+        float maxHeight = terrainTool._targetTerrain.transform.position.y;
+
+        for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
+        {
+            Debug.Log(s.GetPosition(i).y);
+            if (s.GetPosition(i).y > maxHeight) maxHeight = s.GetPosition(i).y;
+        }
+
+        Debug.Log(maxHeight);
+
         for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
         {
             position = s.GetPosition(i);
@@ -129,7 +140,8 @@ public class VRPlayer : MonoBehaviour
             }
             else
             {
-                if (Mathf.Abs(derivative.normalized.y) < 0.15f)
+                if (Mathf.Abs(derivative.normalized.y) < 0.15f 
+                    && (position.y - terrainTool._targetTerrain.transform.position.y) / (maxHeight - terrainTool._targetTerrain.transform.position.y) > 0.3f)
                 {
                     terrainTool.PaintStroke(new Vector3(position.x,
                                                         terrainTool._targetTerrain.transform.position.y,
@@ -137,7 +149,8 @@ public class VRPlayer : MonoBehaviour
                                                         brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
                                                         1f, 2);
                 }
-                else if (Mathf.Abs(derivative.normalized.y) > 0.8f)
+                else if (Mathf.Abs(derivative.normalized.y) > 0.8f
+                         && (position.y - terrainTool._targetTerrain.transform.position.y) / (maxHeight - terrainTool._targetTerrain.transform.position.y) > 0.3f)
                 {
                     terrainTool.PaintStroke(new Vector3(position.x,
                                                         terrainTool._targetTerrain.transform.position.y,
@@ -313,19 +326,39 @@ public class VRPlayer : MonoBehaviour
             if (stroke.Volume() < 50f)
             {
                 if (controllerIndex == 0)
-                    ClearInput();
+                {
+                    if (visualized)
+                    {
+                        ClearStrokes();
+                        visualized = false;
+                    }
+                    else
+                    {
+                        ClearInput();
+                    }
+                }
                 else
+                {
                     filled = !filled;
+                }
 
                 stroke.DestroyStroke();
             }
             else
             {
                 OnFinishingDrawing(stroke);
+                visualized = true;
             }
         }
 
         editing = false;
+    }
+
+    public void ClearStrokes()
+    {
+        strokes = new List<Stroke>();
+        Stroke[] ss = FindObjectsOfType<Stroke>();
+        foreach (Stroke stroke in ss) stroke.HideStroke();
     }
 
     public void ClearInput()

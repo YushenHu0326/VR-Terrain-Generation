@@ -235,6 +235,9 @@ public sealed class TerrainTool : MonoBehaviour
         }
 
         terrainData.SetHeights(0, 0, virtualHeights);
+
+        TerrainModifier modifier = Object.FindObjectOfType<TerrainModifier>();
+        modifier.PaintTerrain();
     }
 
     public void FlattenTerrain(Vector3 worldPosition, float height, int brushWidth, int brushHeight)
