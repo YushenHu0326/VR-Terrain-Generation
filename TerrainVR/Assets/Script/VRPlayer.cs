@@ -112,7 +112,6 @@ public class VRPlayer : MonoBehaviour
 
         for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
         {
-            Debug.Log(s.GetPosition(i).y);
             if (s.GetPosition(i).y > maxHeight) maxHeight = s.GetPosition(i).y;
         }
 
