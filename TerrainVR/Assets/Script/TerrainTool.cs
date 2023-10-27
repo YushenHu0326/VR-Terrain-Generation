@@ -70,7 +70,7 @@ public sealed class TerrainTool : MonoBehaviour
         return new Vector2Int(brushWidth, brushHeight);
     }
 
-    public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative)
+    public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, Vector3 start, Vector3 end)
     {
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
 
@@ -82,6 +82,19 @@ public sealed class TerrainTool : MonoBehaviour
 
         Vector3 direction = new Vector3(derivative.x, 0f, derivative.z);
         Vector3 deviation = new Vector3(0f, 0f, 0f);
+
+        Vector3 startDirection = (worldPosition - start).normalized;
+        Vector3 endDirection = (worldPosition - end).normalized;
+
+        float startSize = Mathf.Max(leftBrushSize, rightBrushSize);
+        float endSize = startSize;
+
+        if (startDirection.y != 0f)
+        {
+            startSize = Mathf.Sqrt(startDirection.x * startDirection.x + startDirection.z * startDirection.z) / Mathf.Abs(startDirection.y);
+            endSize = Mathf.Sqrt(endDirection.x * endDirection.x + endDirection.z * endDirection.z) / Mathf.Abs(endDirection.y);
+        }
+
         float angle = 0f;
 
         for (var y = 0; y < brushSize.y; y++)
@@ -101,18 +114,26 @@ public sealed class TerrainTool : MonoBehaviour
 
                 float distance = Mathf.Sqrt(Mathf.Pow((float)x - (float)brushSize.x / 2f, 2f) +
                                             Mathf.Pow((float)y - (float)brushSize.y / 2f, 2f));
-                distance /= (float)brushSize.x / 2f;
-                distance = Mathf.Clamp(distance, 0f, 1f);
-                distance = 1f - distance;
+
+                float adjustedSize;
 
                 if (leftBrushSize < rightBrushSize)
                 {
-                    distance = Mathf.Lerp(distance * leftBrushSize / rightBrushSize, distance, angle);
+                    adjustedSize = Mathf.Lerp(leftBrushSize * (float)brushSize.x, (float)brushSize.x, angle);
                 }
                 else
                 {
-                    distance = Mathf.Lerp(distance, distance * rightBrushSize / leftBrushSize, angle);
+                    adjustedSize = Mathf.Lerp((float)brushSize.x, rightBrushSize * (float)brushSize.x, angle);
                 }
+
+                /*if (Mathf.Min(startSize, endSize) < Mathf.Max(leftBrushSize, rightBrushSize))
+                {
+                    adjustedSize *= Mathf.Min(startSize, endSize);
+                }*/
+
+                distance /= adjustedSize / 2f;
+                distance = Mathf.Clamp(distance, 0f, 1f);
+                distance = 1f - distance;
 
                 if (virtualHeights[y + brushPosition.y, x + brushPosition.x] - terrainOffset / terrainData.size.y < distance * (height - terrainOffset) / terrainData.size.y)
                     virtualHeights[y + brushPosition.y, x + brushPosition.x] = distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y;
@@ -216,6 +237,7 @@ public sealed class TerrainTool : MonoBehaviour
         modifier.alphas = alphas;
 
         modifier.ModifyTerrain();
+        //GetTerrainData().SetHeights(0, 0, virtualHeights);
     }
     
 
