@@ -137,7 +137,7 @@ public class VRPlayer : MonoBehaviour
                                             1f, 2);
                 }
 
-                if (Mathf.Abs(derivatives[i].y) > 0.9f
+                if (Mathf.Abs(derivatives[i].y) > 0.8f
                     && (position.y - terrainTool._targetTerrain.transform.position.y) / (maxHeight - terrainTool._targetTerrain.transform.position.y) > 0.3f)
                 {
                     terrainTool.PaintStroke(position,
@@ -201,6 +201,7 @@ public class VRPlayer : MonoBehaviour
                 if (rightEditingIndex == 0) derivative = stroke.GetPosition(rightEditingIndex + 1) - stroke.GetPosition(rightEditingIndex);
                 else if (rightEditingIndex == stroke.GetPositionCount() - 1) derivative = stroke.GetPosition(rightEditingIndex) - stroke.GetPosition(rightEditingIndex - 1);
                 else derivative = stroke.GetPosition(rightEditingIndex + 1) - stroke.GetPosition(rightEditingIndex - 1);
+                derivative.y = 0f;
 
                 float angle  = Vector3.Angle(derivative.normalized, (stroke.GetPosition(rightEditingIndex) - position).normalized) *
                                              Mathf.Sign(derivative.normalized.x * (stroke.GetPosition(rightEditingIndex) - position).normalized.z 

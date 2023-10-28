@@ -126,10 +126,10 @@ public sealed class TerrainTool : MonoBehaviour
                     adjustedSize = Mathf.Lerp((float)brushSize.x, rightBrushSize * (float)brushSize.x, angle);
                 }
 
-                /*if (Mathf.Min(startSize, endSize) < Mathf.Max(leftBrushSize, rightBrushSize))
+                if (Mathf.Min(startSize, endSize) * 2f < Mathf.Max(leftBrushSize, rightBrushSize))
                 {
-                    adjustedSize *= Mathf.Min(startSize, endSize);
-                }*/
+                    adjustedSize *= Mathf.Min(startSize, endSize) * 2f;
+                }
 
                 distance /= adjustedSize / 2f;
                 distance = Mathf.Clamp(distance, 0f, 1f);
@@ -158,9 +158,10 @@ public sealed class TerrainTool : MonoBehaviour
         {
             for (var x = 0; x < brushSize.x; x++)
             {
-                if (y >= brushSize.y / 2 - width && y <= brushSize.y / 2 + width)
-                    if (x >= brushSize.x / 2 - width && x <= brushSize.x / 2 + width)
-                        alphas[y + brushPosition.y, x + brushPosition.x] = value;
+                if (alphas[y + brushPosition.y, x + brushPosition.x] < 1f)
+                    if (y >= brushSize.y / 2 - width && y <= brushSize.y / 2 + width)
+                        if (x >= brushSize.x / 2 - width && x <= brushSize.x / 2 + width)
+                            alphas[y + brushPosition.y, x + brushPosition.x] = value;
             }
         }
     }

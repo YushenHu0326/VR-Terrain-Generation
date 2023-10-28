@@ -140,11 +140,13 @@ public class Stroke : MonoBehaviour
         if (slopeIndex == 0) derivative = positions[slopeIndex + 1] - positions[slopeIndex];
         else if (slopeIndex == positions.Count - 1) derivative = positions[slopeIndex] - positions[slopeIndex - 1];
         else derivative = positions[slopeIndex + 1] - positions[slopeIndex - 1];
+        derivative.y = 0f;
 
         Vector3 leftEnd = positions[slopeIndex] + (Quaternion.AngleAxis(-90, Vector3.up) * derivative.normalized) *
                           (positions[slopeIndex].y - terrain.gameObject.transform.position.y) * leftBrushSize;
         Vector3 rightEnd = positions[slopeIndex] + (Quaternion.AngleAxis(90, Vector3.up) * derivative.normalized) *
                           (positions[slopeIndex].y - terrain.gameObject.transform.position.y) * rightBrushSize;
+
         leftEnd.y = terrain.gameObject.transform.position.y;
         rightEnd.y = terrain.gameObject.transform.position.y;
         slopeVisualCue.GetComponent<LineRenderer>().SetPosition(0, leftEnd);
