@@ -11,6 +11,9 @@ public class Stroke : MonoBehaviour
     private List<Vector3> positions;
     private Vector3 lastStrokePosition;
 
+    private List<Vector3> derivatives;
+    private List<int> intervals;
+
     private float leftBrushSize = 1f;
     private float rightBrushSize = 1f;
     public bool filled;
@@ -95,6 +98,42 @@ public class Stroke : MonoBehaviour
 
             lastStrokePosition = position;
         }
+    }
+
+    public void FinishStroke()
+    {
+        derivatives = new List<Vector3>();
+        intervals = new List<int>();
+
+        Vector3 derivative;
+
+        for (int i = 0; i < GetComponent<LineRenderer>().positionCount; i++)
+        {
+            if (i == 0) derivative = GetPosition(i + 1) - GetPosition(i);
+            else if (i == GetComponent<LineRenderer>().positionCount - 1) derivative = GetPosition(i) - GetPosition(i - 1);
+            else derivative = GetPosition(i + 1) - GetPosition(i - 1);
+
+            derivatives.Add(derivative.normalized);
+        }
+        
+        bool inInterval = false;
+        intervals.Add(0);
+
+        for (int i = 1; i < derivatives.Count - 1; i++)
+        {
+            if (GetIsStroke(i) && !inInterval)
+            {
+                intervals.Add(i);
+                inInterval = true;
+            }
+            else if (inInterval && !GetIsStroke(i))
+            {
+                intervals.Add(i);
+                inInterval = false;
+            }
+        }
+
+        intervals.Add(derivatives.Count - 1);
     }
 
     public int LocateEditingIndex(Vector3 position)
@@ -322,6 +361,39 @@ public class Stroke : MonoBehaviour
     public Vector3 GetPosition(int i)
     {
         return positions[i];
+    }
+
+    public Vector3 GetDerivative(int i)
+    {
+        return derivatives[i];
+    }
+
+    public Vector2 GetInterval(int i)
+    {
+        for (int j = 0; j < intervals.Count - 1; j++)
+        {
+            if (intervals[j] < i && intervals[j + 1] > i)
+            {
+                if (j % 2 == 0)
+                {
+                    return new Vector2(intervals[j], intervals[j + 1]);
+                }
+                else
+                {
+                    return new Vector2(-1, -1);
+                }
+            }
+        }
+
+        return new Vector2(-1, -1);
+    }
+
+    public bool GetIsStroke(int i)
+    {
+        if (Mathf.Abs(derivatives[i].y) < 0.2f) return true;
+        if ((i > 0 && i < derivatives.Count - 1) && derivatives[i - 1].y * derivatives[i + 1].y < 0f) return true;
+
+        return false;
     }
 
     public float GetLeftBrushSize()

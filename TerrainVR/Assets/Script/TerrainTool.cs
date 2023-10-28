@@ -126,10 +126,61 @@ public sealed class TerrainTool : MonoBehaviour
                     adjustedSize = Mathf.Lerp((float)brushSize.x, rightBrushSize * (float)brushSize.x, angle);
                 }
 
-                if (Mathf.Min(startSize, endSize) * 2f < Mathf.Max(leftBrushSize, rightBrushSize))
+                if (Mathf.Min(startSize, endSize) < Mathf.Max(leftBrushSize, rightBrushSize))
                 {
-                    adjustedSize *= Mathf.Min(startSize, endSize) * 2f;
+                    adjustedSize *= Mathf.Min(startSize, endSize);
                 }
+                /*if (angle < -0.5f)
+                {
+                    angle += 1f;
+                    angle *= 2f;
+                    if (leftBrushSize < rightBrushSize)
+                    {
+                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), (float)brushSize.x, angle);
+                    }
+                    else
+                    {
+                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), rightBrushSize * (float)brushSize.x, angle);
+                    }
+                }
+                else if (angle < 0f)
+                {
+                    angle += 0.5f;
+                    angle *= 2f;
+                    if (leftBrushSize < rightBrushSize)
+                    {
+                        adjustedSize = Mathf.Lerp((float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
+                    }
+                    else
+                    {
+                        adjustedSize = Mathf.Lerp(rightBrushSize * (float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
+                    }
+                }
+                else if (angle < 0.5f)
+                {
+                    angle *= 2f;
+                    if (leftBrushSize < rightBrushSize)
+                    {
+                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), leftBrushSize * (float)brushSize.x, angle);
+                    }
+                    else
+                    {
+                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), (float)brushSize.x, angle);
+                    }
+                }
+                else
+                {
+                    angle -= 0.5f;
+                    angle *= 2f;
+                    if (leftBrushSize < rightBrushSize)
+                    {
+                        adjustedSize = Mathf.Lerp(leftBrushSize * (float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
+                    }
+                    else
+                    {
+                        adjustedSize = Mathf.Lerp((float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
+                    }
+                }*/
 
                 distance /= adjustedSize / 2f;
                 distance = Mathf.Clamp(distance, 0f, 1f);
