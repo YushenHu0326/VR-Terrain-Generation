@@ -12,11 +12,11 @@ public class Stroke : MonoBehaviour
     private Vector3 lastStrokePosition;
 
     private List<Vector3> derivatives;
-    private List<int> intervals;
 
     private float leftBrushSize = 1f;
     private float rightBrushSize = 1f;
     public bool filled;
+    public bool activated;
 
     private float xMin, xMax, yMin, yMax, zMax, zMin;
 
@@ -58,6 +58,8 @@ public class Stroke : MonoBehaviour
         }
 
         terrain = FindObjectOfType<Terrain>();
+
+        activated = true;
     }
 
     public void DrawStroke(Vector3 position)
@@ -103,7 +105,6 @@ public class Stroke : MonoBehaviour
     public void FinishStroke()
     {
         derivatives = new List<Vector3>();
-        intervals = new List<int>();
 
         Vector3 derivative;
 
@@ -115,25 +116,6 @@ public class Stroke : MonoBehaviour
 
             derivatives.Add(derivative.normalized);
         }
-        
-        bool inInterval = false;
-        intervals.Add(0);
-
-        for (int i = 1; i < derivatives.Count - 1; i++)
-        {
-            if (GetIsStroke(i) && !inInterval)
-            {
-                intervals.Add(i);
-                inInterval = true;
-            }
-            else if (inInterval && !GetIsStroke(i))
-            {
-                intervals.Add(i);
-                inInterval = false;
-            }
-        }
-
-        intervals.Add(derivatives.Count - 1);
     }
 
     public int LocateEditingIndex(Vector3 position)
@@ -350,6 +332,7 @@ public class Stroke : MonoBehaviour
     {
         if (surface != null) Destroy(surface);
         lineRenderer.enabled = false;
+        activated = false;
     }
 
     public void DestroyStroke()
@@ -366,26 +349,6 @@ public class Stroke : MonoBehaviour
     public Vector3 GetDerivative(int i)
     {
         return derivatives[i];
-    }
-
-    public Vector2 GetInterval(int i)
-    {
-        for (int j = 0; j < intervals.Count - 1; j++)
-        {
-            if (intervals[j] < i && intervals[j + 1] > i)
-            {
-                if (j % 2 == 0)
-                {
-                    return new Vector2(intervals[j], intervals[j + 1]);
-                }
-                else
-                {
-                    return new Vector2(-1, -1);
-                }
-            }
-        }
-
-        return new Vector2(-1, -1);
     }
 
     public bool GetIsStroke(int i)

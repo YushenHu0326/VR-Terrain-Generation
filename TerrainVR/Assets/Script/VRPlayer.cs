@@ -39,7 +39,6 @@ public class VRPlayer : MonoBehaviour
     {
         stroke = new GameObject("Stroke").AddComponent<Stroke>();
         stroke.CreateStroke(strokeMat, position, leftBrushSize, rightBrushSize, filled);
-        strokes.Add(stroke);
     }
 
     void OnDrawing(Vector3 position)
@@ -57,126 +56,42 @@ public class VRPlayer : MonoBehaviour
 
         if (s.filled)
         {
-            for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
+            for (int i = 0; i < s.GetPositionCount(); i++)
             {
-                position = s.GetComponent<Stroke>().GetPosition(i);
+                position = s.GetPosition(i);
 
                 offset = position.y - terrainTool._targetTerrain.transform.position.y;
                 brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
 
                 if (i != 0)
                 {
-                    terrainTool.FillTerrain(new Vector3(position.x,
-                                                        terrainTool._targetTerrain.transform.position.y,
-                                                        position.z), s.GetPosition(0), Mathf.Abs(offset), 20, 20);
+                    terrainTool.FillTerrain(position, s.GetPosition(0), Mathf.Abs(offset), 20, 20);
                 }
             }
         }
 
-        for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
+        for (int i = 0; i < s.GetPositionCount(); i++)
         {
             position = s.GetPosition(i);
 
             offset = position.y - terrainTool._targetTerrain.transform.position.y;
             brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
 
+            int startIndex = Mathf.Max(0, i - 20);
+            int endIndex = Mathf.Min(s.GetPositionCount() - 1, i + 20);
+
             if (s.filled)
             {
-                Vector2 interval = s.GetInterval(i);
-                Vector3 start = s.GetPosition(0);
-                Vector3 end = s.GetPosition(s.GetPositionCount() - 1);
-
-                if (interval.x > 0 && interval.y > 0)
-                {
-                    start = s.GetPosition((int)interval.x);
-                    end = s.GetPosition((int)interval.y);
-                }
-
                 terrainTool.RaiseTerrain(position,
-                                         Mathf.Abs(offset) / 2f, brushSize / 2f,
-                                         Mathf.Max(s.GetLeftBrushSize(), s.GetRightBrushSize()) / 2f,
-                                         Mathf.Max(s.GetLeftBrushSize(), s.GetRightBrushSize()) / 2f,
-                                         s.GetDerivative(i), start, end);
+                                         Mathf.Abs(offset), brushSize,
+                                         s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                         s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
             }
             else
             {
-                Vector2 interval = s.GetInterval(i);
-                Vector3 start = s.GetPosition(0);
-                Vector3 end = s.GetPosition(s.GetPositionCount() - 1);
-
-                if (interval.x > 0 && interval.y > 0)
-                {
-                    start = s.GetPosition((int)interval.x);
-                    end = s.GetPosition((int)interval.y);
-                }
-
                 terrainTool.RaiseTerrain(position,
                                          Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
-                                         s.GetDerivative(i), start, end);
-            }
-        }
-
-        float maxHeight = terrainTool._targetTerrain.transform.position.y;
-
-        for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
-        {
-            if (s.GetPosition(i).y > maxHeight) maxHeight = s.GetPosition(i).y;
-        }
-
-        for (int i = 0; i < s.GetComponent<LineRenderer>().positionCount; i++)
-        {
-            position = s.GetPosition(i);
-
-            offset = position.y - terrainTool._targetTerrain.transform.position.y;
-            brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
-
-            if (s.filled)
-            {
-                terrainTool.PaintStroke(position,
-                                        brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
-                                        0.6f, 6);
-            }
-            else
-            {
-                if (s.GetIsStroke(i)
-                    && (position.y - terrainTool._targetTerrain.transform.position.y) / (maxHeight - terrainTool._targetTerrain.transform.position.y) > 0.3f)
-                {
-                    terrainTool.PaintStroke(position,
-                                            brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
-                                            1f, 2);
-                }
-
-                if (Mathf.Abs(s.GetDerivative(i).y) > 0.9f
-                    && (position.y - terrainTool._targetTerrain.transform.position.y) / (maxHeight - terrainTool._targetTerrain.transform.position.y) > 0.3f)
-                {
-                    terrainTool.PaintStroke(position,
-                                            brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
-                                            0.6f, 2);
-                }
-
-                if (s.GetLeftBrushSize() < 0.5f)
-                {
-                    float middlePoint = (position.y - terrainTool._targetTerrain.transform.position.y) * s.GetLeftBrushSize() / 2f;
-                    if (middlePoint > 3f)
-                    {
-                        Vector3 cliff = position + (Quaternion.AngleAxis(-90, Vector3.up) * s.GetDerivative(i)) * middlePoint;
-                        terrainTool.PaintStroke(cliff,
-                                                brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
-                                                0.6f, (int)(middlePoint - 3f));
-                    }
-                }
-
-                if (s.GetRightBrushSize() < 0.5f)
-                {
-                    float middlePoint = (position.y - terrainTool._targetTerrain.transform.position.y) * s.GetRightBrushSize() / 2f;
-                    if (middlePoint > 3f)
-                    {
-                        Vector3 cliff = position + (Quaternion.AngleAxis(90, Vector3.up) * s.GetDerivative(i)) * middlePoint;
-                        terrainTool.PaintStroke(cliff,
-                                                brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
-                                                0.6f, (int)(middlePoint - 3f));
-                    }
-                }
+                                         s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
             }
         }
 
@@ -252,6 +167,7 @@ public class VRPlayer : MonoBehaviour
         foreach (Stroke s in strokes)
         {
             if (s == null) continue;
+            if (!s.activated) continue;
             if (controllerIndex == 0)
             {
                 leftEditingIndex = s.LocateEditingIndex(position);
@@ -339,6 +255,7 @@ public class VRPlayer : MonoBehaviour
             else
             {
                 stroke.FinishStroke();
+                strokes.Add(stroke);
                 OnFinishingDrawing(stroke);
                 visualized = true;
             }
@@ -349,7 +266,6 @@ public class VRPlayer : MonoBehaviour
 
     public void ClearStrokes()
     {
-        strokes = new List<Stroke>();
         Stroke[] ss = FindObjectsOfType<Stroke>();
         foreach (Stroke stroke in ss) stroke.HideStroke();
     }

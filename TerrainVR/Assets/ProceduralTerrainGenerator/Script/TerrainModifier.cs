@@ -108,11 +108,11 @@ public class TerrainModifier : MonoBehaviour
             {
                 float r = tex.GetPixel(w, h).r;
 
-                float n = Mathf.PerlinNoise((float)w / 12f, (float)h / 12f);
+                float n = Mathf.PerlinNoise((float)w / 30f, (float)h / 30f);
 
-                r *= (n * 0.5f + 1f);
+                r *= ((1f - r) * n * 0.2f + 1f);
 
-                if (r < 0.3f)
+                /*if (r < 0.3f)
                 {
                     r = 0f;
                 }
@@ -122,7 +122,10 @@ public class TerrainModifier : MonoBehaviour
                         r = strokeTex.GetPixel(w, h).r;
                     else
                         r = 0.3f;
-                }
+                }*/
+                r *= 8f;
+                r = Mathf.Floor(r);
+                r /= 10f;
 
                 tex.SetPixel(w, h, new Color(r, r, r));
             }

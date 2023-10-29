@@ -70,7 +70,7 @@ public sealed class TerrainTool : MonoBehaviour
         return new Vector2Int(brushWidth, brushHeight);
     }
 
-    public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, Vector3 start, Vector3 end)
+    public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, Vector3 leftSlope, Vector3 rightSlope, Vector3 start, Vector3 end)
     {
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
 
@@ -85,14 +85,32 @@ public sealed class TerrainTool : MonoBehaviour
 
         Vector3 startDirection = (worldPosition - start).normalized;
         Vector3 endDirection = (worldPosition - end).normalized;
+        Vector3 leftDirection = (worldPosition - leftSlope).normalized;
+        Vector3 rightDirection = (worldPosition - rightSlope).normalized;
 
         float startSize = Mathf.Max(leftBrushSize, rightBrushSize);
         float endSize = startSize;
+        float frontSize = startSize;
+        float backSize = startSize;
 
         if (startDirection.y != 0f)
         {
             startSize = Mathf.Sqrt(startDirection.x * startDirection.x + startDirection.z * startDirection.z) / Mathf.Abs(startDirection.y);
+        }
+
+        if (endDirection.y != 0f)
+        {
             endSize = Mathf.Sqrt(endDirection.x * endDirection.x + endDirection.z * endDirection.z) / Mathf.Abs(endDirection.y);
+        }
+
+        if (startDirection.y != 0f)
+        {
+            frontSize = Mathf.Sqrt(leftDirection.x * leftDirection.x + leftDirection.z * leftDirection.z) / Mathf.Abs(leftDirection.y);
+        }
+
+        if (endDirection.y != 0f)
+        {
+            backSize = Mathf.Sqrt(rightDirection.x * rightDirection.x + rightDirection.z * rightDirection.z) / Mathf.Abs(rightDirection.y);
         }
 
         float angle = 0f;
@@ -126,61 +144,10 @@ public sealed class TerrainTool : MonoBehaviour
                     adjustedSize = Mathf.Lerp((float)brushSize.x, rightBrushSize * (float)brushSize.x, angle);
                 }
 
-                if (Mathf.Min(startSize, endSize) < Mathf.Max(leftBrushSize, rightBrushSize))
+                if (Mathf.Min(startSize, endSize, frontSize, backSize) < Mathf.Max(leftBrushSize, rightBrushSize))
                 {
-                    adjustedSize *= Mathf.Min(startSize, endSize);
+                    adjustedSize *= Mathf.Min(startSize, endSize, frontSize, backSize);
                 }
-                /*if (angle < -0.5f)
-                {
-                    angle += 1f;
-                    angle *= 2f;
-                    if (leftBrushSize < rightBrushSize)
-                    {
-                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), (float)brushSize.x, angle);
-                    }
-                    else
-                    {
-                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), rightBrushSize * (float)brushSize.x, angle);
-                    }
-                }
-                else if (angle < 0f)
-                {
-                    angle += 0.5f;
-                    angle *= 2f;
-                    if (leftBrushSize < rightBrushSize)
-                    {
-                        adjustedSize = Mathf.Lerp((float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
-                    }
-                    else
-                    {
-                        adjustedSize = Mathf.Lerp(rightBrushSize * (float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
-                    }
-                }
-                else if (angle < 0.5f)
-                {
-                    angle *= 2f;
-                    if (leftBrushSize < rightBrushSize)
-                    {
-                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), leftBrushSize * (float)brushSize.x, angle);
-                    }
-                    else
-                    {
-                        adjustedSize = Mathf.Lerp(Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), (float)brushSize.x, angle);
-                    }
-                }
-                else
-                {
-                    angle -= 0.5f;
-                    angle *= 2f;
-                    if (leftBrushSize < rightBrushSize)
-                    {
-                        adjustedSize = Mathf.Lerp(leftBrushSize * (float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
-                    }
-                    else
-                    {
-                        adjustedSize = Mathf.Lerp((float)brushSize.x, Mathf.Min((leftBrushSize + rightBrushSize) / 2f, Mathf.Min(startSize, endSize) * 2f), angle);
-                    }
-                }*/
 
                 distance /= adjustedSize / 2f;
                 distance = Mathf.Clamp(distance, 0f, 1f);
@@ -188,7 +155,7 @@ public sealed class TerrainTool : MonoBehaviour
 
                 if (virtualHeights[y + brushPosition.y, x + brushPosition.x] - terrainOffset / terrainData.size.y < distance * (height - terrainOffset) / terrainData.size.y)
                     virtualHeights[y + brushPosition.y, x + brushPosition.x] = distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y;
-
+                
                 if (alphas[y + brushPosition.y, x + brushPosition.x] < 0.99f)
                     alphas[y + brushPosition.y, x + brushPosition.x] = 0.3f;
             }
@@ -244,9 +211,9 @@ public sealed class TerrainTool : MonoBehaviour
             {
                 y = initPositionY + (int)((float)(x - initPositionX) / (float)(worldPositionX - initPositionX) * (worldPositionY - initPositionY));
 
-                for (var yy = 0; yy < 20; yy++)
+                for (var yy = 0; yy < 15; yy++)
                 {
-                    for (var xx = 0; xx < 20; xx++)
+                    for (var xx = 0; xx < 15; xx++)
                     {
                         if (virtualHeights[yy - 10 + y, xx - 10 + x] < height / terrainData.size.y)
                             virtualHeights[yy - 10 + y, xx - 10 + x] = height / terrainData.size.y;
