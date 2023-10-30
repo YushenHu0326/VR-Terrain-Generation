@@ -75,7 +75,7 @@ public sealed class TerrainTool : MonoBehaviour
         return new Vector2Int(brushWidth, brushHeight);
     }
 
-    public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, Vector3 leftSlope, Vector3 rightSlope, Vector3 start, Vector3 end)
+    public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, float leftBrushCurve, float rightBrushCurve, Vector3 derivative, Vector3 leftSlope, Vector3 rightSlope, Vector3 start, Vector3 end)
     {
         if (!hasGroundHeights) hasGroundHeights = true;
 
@@ -121,6 +121,7 @@ public sealed class TerrainTool : MonoBehaviour
         }
 
         float angle = 0f;
+        float angleTemp;
 
         for (var y = 0; y < brushSize.y; y++)
         {
@@ -132,6 +133,7 @@ public sealed class TerrainTool : MonoBehaviour
                 angle = Vector3.Angle(direction.normalized, deviation.normalized) * 
                                       Mathf.Sign(direction.normalized.x * deviation.normalized.z - direction.normalized.z * deviation.normalized.x);
                 angle /= 180f;
+                angleTemp = angle;
 
                 if (angle < -0.5f) angle = 1f - (-angle - 0.5f);
                 else if (angle < 0.5f && angle >= -0.5f) angle = 1f - (angle + 0.5f);
@@ -160,13 +162,16 @@ public sealed class TerrainTool : MonoBehaviour
                 distance = Mathf.Clamp(distance, 0f, 1f);
                 distance = 1f - distance;
 
+                if (angleTemp < 0f) distance = Mathf.Pow(distance, Mathf.Lerp(rightBrushCurve, 1f, Mathf.Abs(angleTemp + 0.5f) * 2f));
+                else distance = Mathf.Pow(distance, Mathf.Lerp(leftBrushCurve, 1f, Mathf.Abs(angleTemp - 0.5f) * 2f));
+
                 if (virtualHeights[y + brushPosition.y, x + brushPosition.x] - terrainOffset / terrainData.size.y < distance * (height - terrainOffset) / terrainData.size.y)
                     virtualHeights[y + brushPosition.y, x + brushPosition.x] = distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y;
             }
         }
     }
 
-    public void LowerTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative)
+    public void LowerTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, float leftBrushCurve, float rightBrushCurve, Vector3 derivative)
     {
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
 
@@ -183,6 +188,7 @@ public sealed class TerrainTool : MonoBehaviour
         Vector3 deviation = new Vector3(0f, 0f, 0f);
 
         float angle = 0f;
+        float angleTemp;
 
         for (var y = 0; y < brushSize.y; y++)
         {
@@ -194,6 +200,7 @@ public sealed class TerrainTool : MonoBehaviour
                 angle = Vector3.Angle(direction.normalized, deviation.normalized) *
                                       Mathf.Sign(direction.normalized.x * deviation.normalized.z - direction.normalized.z * deviation.normalized.x);
                 angle /= 180f;
+                angleTemp = angle;
 
                 if (angle < -0.5f) angle = 1f - (-angle - 0.5f);
                 else if (angle < 0.5f && angle >= -0.5f) angle = 1f - (angle + 0.5f);
@@ -215,6 +222,9 @@ public sealed class TerrainTool : MonoBehaviour
 
                 distance /= adjustedSize / 2f;
                 distance = Mathf.Clamp(distance, 0f, 1f);
+
+                if (angleTemp < 0f) distance = Mathf.Pow(distance, Mathf.Lerp(rightBrushCurve, 1f, Mathf.Abs(angleTemp + 0.5f) * 2f));
+                else distance = Mathf.Pow(distance, Mathf.Lerp(leftBrushCurve, 1f, Mathf.Abs(angleTemp - 0.5f) * 2f));
 
                 float desireHeight = Mathf.Lerp(brushHeight, originHeight, distance);
 

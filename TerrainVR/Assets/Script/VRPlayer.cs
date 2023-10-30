@@ -84,7 +84,7 @@ public class VRPlayer : MonoBehaviour
                     brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
 
                     terrainTool.RaiseTerrain(position,
-                                             Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                             Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
                                              s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
                 }
                 else
@@ -93,7 +93,7 @@ public class VRPlayer : MonoBehaviour
                     brushSize = Mathf.Abs(offset) * 2f;
 
                     terrainTool.LowerTerrain(position,
-                                             hit.point.y, brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                             hit.point.y, brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
                                              s.GetDerivative(i));
                 }
             }

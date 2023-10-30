@@ -15,6 +15,8 @@ public class Stroke : MonoBehaviour
 
     private float leftBrushSize = 1f;
     private float rightBrushSize = 1f;
+    private float leftBrushCurve = 1f;
+    private float rightBrushCurve = 1f;
     public bool filled;
     public bool activated;
 
@@ -143,7 +145,7 @@ public class Stroke : MonoBehaviour
         slopeVisualCue.GetComponent<LineRenderer>().material = lineRenderer.material;
         slopeVisualCue.GetComponent<LineRenderer>().material.SetColor("_OutlineColor", Color.blue);
 
-        slopeVisualCue.GetComponent<LineRenderer>().positionCount = 3;
+        slopeVisualCue.GetComponent<LineRenderer>().positionCount = 5;
 
         slopeIndex = index;
     }
@@ -159,7 +161,7 @@ public class Stroke : MonoBehaviour
 
         if (leftIndex < 0 && rightIndex < 0) return;
 
-        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(1, positions[slopeIndex]);
+        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(2, positions[slopeIndex]);
 
         Vector3 derivative;
         if (slopeIndex == 0) derivative = positions[slopeIndex + 1] - positions[slopeIndex];
@@ -174,29 +176,72 @@ public class Stroke : MonoBehaviour
 
         leftEnd.y = terrain.gameObject.transform.position.y + terrainOffset;
         rightEnd.y = terrain.gameObject.transform.position.y + terrainOffset;
+
+        Vector3 leftMid = (positions[slopeIndex] + leftEnd) / 2f;
+        Vector3 rightMid = (positions[slopeIndex] + rightEnd) / 2f;
+
+        leftMid.y = leftEnd.y + Mathf.Pow(0.5f, leftBrushCurve) * (positions[slopeIndex].y - leftEnd.y);
+        rightMid.y = rightEnd.y + Mathf.Pow(0.5f, rightBrushCurve) * (positions[slopeIndex].y - rightEnd.y);
+
         slopeVisualCue.GetComponent<LineRenderer>().SetPosition(0, leftEnd);
-        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(2, rightEnd);
+        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(1, leftMid);
+        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(3, rightMid);
+        slopeVisualCue.GetComponent<LineRenderer>().SetPosition(4, rightEnd);
 
         if (leftIndex <= -100)
         {
             if (leftIndex == -100)
             {
-                if (Vector3.Distance(leftPosition, leftEnd) < 50f)
+                if (Vector3.Distance(leftPosition, leftEnd) < 20f)
                 {
                     Vector3 d = leftPosition - positions[slopeIndex];
                     d.y = 0f;
                     leftBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - leftPosition.y);
                     leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 2f);
                 }
+                else
+                {
+                    if (leftEnd.y < positions[slopeIndex].y)
+                    {
+                        if (leftPosition.y > leftEnd.y && leftPosition.y < positions[slopeIndex].y)
+                        {
+                            leftBrushCurve = (positions[slopeIndex].y - leftPosition.y) / (positions[slopeIndex].y - leftEnd.y) * 2f;
+                        }
+                    }
+                    else
+                    {
+                        if (leftPosition.y < leftEnd.y && leftPosition.y > positions[slopeIndex].y)
+                        {
+                            leftBrushCurve = (leftEnd.y - leftPosition.y) / (leftEnd.y - positions[slopeIndex].y) * 2f;
+                        }
+                    }
+                }
             }
             else if (leftIndex == -101)
             {
-                if (Vector3.Distance(leftPosition, rightEnd) < 50f)
+                if (Vector3.Distance(leftPosition, rightEnd) < 20f)
                 {
                     Vector3 d = leftPosition - positions[slopeIndex];
                     d.y = 0f;
                     rightBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - leftPosition.y);
                     rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 2f);
+                }
+                else
+                {
+                    if (rightEnd.y < positions[slopeIndex].y)
+                    {
+                        if (leftPosition.y > rightEnd.y && leftPosition.y < positions[slopeIndex].y)
+                        {
+                            rightBrushCurve = (positions[slopeIndex].y - leftPosition.y) / (positions[slopeIndex].y - rightEnd.y) * 2f;
+                        }
+                    }
+                    else
+                    {
+                        if (leftPosition.y < rightEnd.y && leftPosition.y > positions[slopeIndex].y)
+                        {
+                            rightBrushCurve = (rightEnd.y - leftPosition.y) / (rightEnd.y - positions[slopeIndex].y) * 2f;
+                        }
+                    }
                 }
             }
         }
@@ -205,22 +250,56 @@ public class Stroke : MonoBehaviour
         {
             if (rightIndex == -100)
             {
-                if (Vector3.Distance(rightPosition, leftEnd) < 50f)
+                if (Vector3.Distance(rightPosition, leftEnd) < 20f)
                 {
                     Vector3 d = rightPosition - positions[slopeIndex];
                     d.y = 0f;
                     leftBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - leftPosition.y);
                     leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 2f);
                 }
+                else
+                {
+                    if (leftEnd.y < positions[slopeIndex].y)
+                    {
+                        if (rightPosition.y > leftEnd.y && rightPosition.y < positions[slopeIndex].y)
+                        {
+                            leftBrushCurve = (positions[slopeIndex].y - rightPosition.y) / (positions[slopeIndex].y - leftEnd.y) * 2f;
+                        }
+                    }
+                    else
+                    {
+                        if (rightPosition.y < leftEnd.y && rightPosition.y > positions[slopeIndex].y)
+                        {
+                            leftBrushCurve = (leftEnd.y - rightPosition.y) / (leftEnd.y - positions[slopeIndex].y) * 2f;
+                        }
+                    }
+                }
             }
             else if (rightIndex == -101)
             {
-                if (Vector3.Distance(rightPosition, rightEnd) < 50f)
+                if (Vector3.Distance(rightPosition, rightEnd) < 20f)
                 {
                     Vector3 d = rightPosition - positions[slopeIndex];
                     d.y = 0f;
                     rightBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - leftPosition.y);
                     rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 2f);
+                }
+                else
+                {
+                    if (rightEnd.y < positions[slopeIndex].y)
+                    {
+                        if (rightPosition.y > rightEnd.y && rightPosition.y < positions[slopeIndex].y)
+                        {
+                            rightBrushCurve = (positions[slopeIndex].y - rightPosition.y) / (positions[slopeIndex].y - rightEnd.y) * 2f;
+                        }
+                    }
+                    else
+                    {
+                        if (rightPosition.y < rightEnd.y && rightPosition.y > positions[slopeIndex].y)
+                        {
+                            rightBrushCurve = (rightEnd.y - rightPosition.y) / (rightEnd.y - positions[slopeIndex].y) * 2f;
+                        }
+                    }
                 }
             }
 
@@ -383,6 +462,16 @@ public class Stroke : MonoBehaviour
     public float GetRightBrushSize()
     {
         return rightBrushSize;
+    }
+
+    public float GetLeftBrushCurve()
+    {
+        return Mathf.Clamp(leftBrushCurve, 0.2f, 2f);
+    }
+
+    public float GetRightBrushCurve()
+    {
+        return Mathf.Clamp(rightBrushCurve, 0.2f, 2f);
     }
 
     public int GetPositionCount()
