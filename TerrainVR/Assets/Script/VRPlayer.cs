@@ -126,15 +126,9 @@ public class VRPlayer : MonoBehaviour
         {
             if (controllerIndex == 0)
             {
-                Vector3 derivative;
-                if (rightEditingIndex == 0) derivative = stroke.GetPosition(rightEditingIndex + 1) - stroke.GetPosition(rightEditingIndex);
-                else if (rightEditingIndex == stroke.GetPositionCount() - 1) derivative = stroke.GetPosition(rightEditingIndex) - stroke.GetPosition(rightEditingIndex - 1);
-                else derivative = stroke.GetPosition(rightEditingIndex + 1) - stroke.GetPosition(rightEditingIndex - 1);
-                derivative.y = 0f;
-
-                float angle  = Vector3.Angle(derivative.normalized, (stroke.GetPosition(rightEditingIndex) - position).normalized) *
-                                             Mathf.Sign(derivative.normalized.x * (stroke.GetPosition(rightEditingIndex) - position).normalized.z 
-                                             - derivative.normalized.z * (stroke.GetPosition(rightEditingIndex) - position).normalized.x);
+                float angle  = Vector3.Angle(stroke.GetDerivative(rightEditingIndex), (stroke.GetPosition(rightEditingIndex) - position).normalized) *
+                                             Mathf.Sign(stroke.GetDerivative(rightEditingIndex).x * (stroke.GetPosition(rightEditingIndex) - position).normalized.z 
+                                             - stroke.GetDerivative(rightEditingIndex).z * (stroke.GetPosition(rightEditingIndex) - position).normalized.x);
 
                 angle /= 180f;
 
@@ -152,15 +146,15 @@ public class VRPlayer : MonoBehaviour
                 else if (leftEditingIndex == stroke.GetPositionCount() - 1) derivative = stroke.GetPosition(leftEditingIndex) - stroke.GetPosition(leftEditingIndex - 1);
                 else derivative = stroke.GetPosition(leftEditingIndex + 1) - stroke.GetPosition(leftEditingIndex - 1);
 
-                float angle = Vector3.Angle(derivative.normalized, (stroke.GetPosition(leftEditingIndex) - position).normalized) *
-                                             Mathf.Sign(derivative.normalized.x * (stroke.GetPosition(leftEditingIndex) - position).normalized.z
-                                             - derivative.normalized.z * (stroke.GetPosition(leftEditingIndex) - position).normalized.x);
+                float angle = Vector3.Angle(stroke.GetDerivative(leftEditingIndex), (stroke.GetPosition(leftEditingIndex) - position).normalized) *
+                                             Mathf.Sign(stroke.GetDerivative(leftEditingIndex).x * (stroke.GetPosition(leftEditingIndex) - position).normalized.z
+                                             - stroke.GetDerivative(leftEditingIndex).z * (stroke.GetPosition(leftEditingIndex) - position).normalized.x);
 
                 angle /= 180f;
 
-                if ((angle > -0.55f && angle < -0.45f) && position.y < stroke.GetPosition(leftEditingIndex).y)
+                if (angle > -0.55f && angle < -0.45f)
                     rightEditingIndex = -100;
-                else if ((angle < 0.55f && angle > 0.45f) && position.y < stroke.GetPosition(leftEditingIndex).y)
+                else if (angle < 0.55f && angle > 0.45f)
                     rightEditingIndex = -101;
                 else
                     rightEditingIndex = stroke.LocateEditingIndex(position);
