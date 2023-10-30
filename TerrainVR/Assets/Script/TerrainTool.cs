@@ -77,7 +77,6 @@ public sealed class TerrainTool : MonoBehaviour
 
     public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, Vector3 leftSlope, Vector3 rightSlope, Vector3 start, Vector3 end)
     {
-        Debug.Log("1");
         if (!hasGroundHeights) hasGroundHeights = true;
 
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);

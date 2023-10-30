@@ -10,7 +10,7 @@ public class TerrainModifier : MonoBehaviour
     private TerrainData terrainData;
     private float maxHeight, minHeight;
     private float maxBaseHeight, minBaseHeight;
-    private float maxColor;
+    private float maxColor, maxBaseColor;
     private int terrainType;
 
     public float[,] heights;
@@ -143,7 +143,9 @@ public class TerrainModifier : MonoBehaviour
 
                 float n = Mathf.PerlinNoise((float)w / 30f, (float)h / 30f);
 
-                r *= ((1f - r) * n * 0.2f + 1f);
+                n *= 1f - terrainData.GetInterpolatedNormal((float)w / 256f, (float)h / 256).y;
+
+                r *= ((1f - r) * n * 0.5f + 1f);
 
                 r *= 10f;
                 r = Mathf.Floor(r);
@@ -209,15 +211,15 @@ public class TerrainModifier : MonoBehaviour
         float[,] originHeights = terrainData.GetHeights(0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
         float[,] newHeights = new float[terrainData.heightmapResolution, terrainData.heightmapResolution];
 
-        maxColor = 0f;
-
-        if (hasBaseHeights)
+        if (hasBaseHeights && !hasGroundHeights)
         {
+            maxBaseColor = 0f;
+
             for (int y = 0; y < terrainData.heightmapResolution; y++)
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
                 {
-                    if (baseTex.GetPixel(x, y).r > maxColor) maxColor = baseTex.GetPixel(x, y).r;
+                    if (baseTex.GetPixel(x, y).r > maxBaseColor) maxBaseColor = baseTex.GetPixel(x, y).r;
                 }
             }
 
@@ -225,15 +227,14 @@ public class TerrainModifier : MonoBehaviour
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
                 {
-                    newHeights[y, x] = baseTex.GetPixel(x, y).r / maxColor * (maxBaseHeight - minBaseHeight) + minBaseHeight;
+                    newHeights[y, x] = baseTex.GetPixel(x, y).r / maxBaseColor * (maxBaseHeight - minBaseHeight) + minBaseHeight;
                 }
             }
         }
-
-        maxColor = 0f;
-
-        if (hasGroundHeights)
+        else if (hasGroundHeights && !hasBaseHeights)
         {
+            maxColor = 0f;
+
             for (int y = 0; y < terrainData.heightmapResolution; y++)
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
@@ -246,10 +247,41 @@ public class TerrainModifier : MonoBehaviour
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
                 {
-                    if (hasBaseHeights)
-                        newHeights[y, x] += tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight);
-                    else
-                        newHeights[y, x] = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
+                    newHeights[y, x] = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
+                }
+            }
+        }
+        else
+        {
+            maxColor = 0f;
+            maxBaseColor = 0f;
+
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    if (tex.GetPixel(x, y).r > maxColor) maxColor = tex.GetPixel(x, y).r;
+                }
+            }
+
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    if (baseTex.GetPixel(x, y).r > maxBaseColor) maxBaseColor = baseTex.GetPixel(x, y).r;
+                }
+            }
+
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    float baseHeight = baseTex.GetPixel(x, y).r / maxBaseColor * (maxBaseHeight - minBaseHeight) + minBaseHeight;
+                    float groundHeight = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
+
+                    float lerp = tex.GetPixel(x, y).r * 2f;
+
+                    newHeights[y, x] = Mathf.Lerp(baseHeight, groundHeight, lerp);
                 }
             }
         }
