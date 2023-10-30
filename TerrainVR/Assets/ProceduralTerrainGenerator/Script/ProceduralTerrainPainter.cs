@@ -53,7 +53,7 @@ public class ProceduralTerrainPainter : MonoBehaviour
         //float noise = 0f;
         int layer = 0;
 
-        Texture2D tex = new Texture2D(terrainData.alphamapWidth, terrainData.alphamapHeight, TextureFormat.ARGB32, false);
+        //Texture2D tex = new Texture2D(terrainData.alphamapWidth, terrainData.alphamapHeight, TextureFormat.ARGB32, false);
 
         for (int y = 0; y < terrainData.alphamapWidth; y++)
         {
@@ -65,7 +65,7 @@ public class ProceduralTerrainPainter : MonoBehaviour
                 //noise = Mathf.PerlinNoise((float)x / 20f, (float)y / 20f);
                 layer = (int)(height / 3f);
 
-                tex.SetPixel(x, y, new Color(normal, 0f, 0f, 1f));
+                //tex.SetPixel(x, y, new Color(normal, 0f, 0f, 1f));
 
                 if (normal > 0.8f)
                 {
@@ -114,8 +114,8 @@ public class ProceduralTerrainPainter : MonoBehaviour
 
         terrainData.SetAlphamaps(0, 0, alphas);
 
-        byte[] bytes = tex.EncodeToPNG();
+        //byte[] bytes = tex.EncodeToPNG();
 
-        System.IO.File.WriteAllBytes(Application.dataPath + "/n.png", bytes);
+        //System.IO.File.WriteAllBytes(Application.dataPath + "/n.png", bytes);
     }
 }

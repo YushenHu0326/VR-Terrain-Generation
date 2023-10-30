@@ -35,6 +35,8 @@ public class VRPlayer : MonoBehaviour
     private bool editing;
     private bool visualized;
 
+    private UserStudy study;
+
     void OnStartDrawing(Vector3 position)
     {
         stroke = new GameObject("Stroke").AddComponent<Stroke>();
@@ -80,7 +82,7 @@ public class VRPlayer : MonoBehaviour
             {
                 if (hit.point.y < position.y)
                 {
-                    offset = position.y - terrainTool._targetTerrain.transform.position.y;
+                    offset = position.y - terrainTool.targetTerrain.transform.position.y;
                     brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
 
                     terrainTool.RaiseTerrain(position,
@@ -160,6 +162,22 @@ public class VRPlayer : MonoBehaviour
                     rightEditingIndex = stroke.LocateEditingIndex(position);
             }
 
+            /****************************************************************/
+            /*                       User Study use                         */
+            /****************************************************************/
+
+            if (study != null)
+            { 
+                study.StartWriting();
+                if (controllerIndex == 0) study.WriteText("Editing left hand");
+                else study.WriteText("Editing right hand");
+                study.WriteVector(position);
+            }
+
+            /****************************************************************/
+            /*                       User Study use                         */
+            /****************************************************************/
+
             return;
         }
 
@@ -196,12 +214,59 @@ public class VRPlayer : MonoBehaviour
             activeHand = controllerIndex;
             OnStartDrawing(position);
         }
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
+
+        if (study != null)
+        {
+            study.StartWriting();
+            if (editing)
+            {
+                if (controllerIndex == 0) study.WriteText("Editing left hand");
+                else study.WriteText("Editing right hand");
+            }
+            else
+            {
+                if (controllerIndex == 0) study.WriteText("Authoring left hand");
+                else study.WriteText("Authoring right hand");
+            }
+            study.WriteVector(position);
+        }
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
     }
 
     public void OnSingleInput(Vector3 position, int controllerIndex)
     {
         if (editing) OnSingleEditingStroke(position, controllerIndex);
         else OnDrawing(position);
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
+
+        if (study != null)
+        {
+            if (editing)
+            {
+                if (controllerIndex == 0) study.WriteText("Editing left hand");
+                else study.WriteText("Editing right hand");
+            }
+            else
+            {
+                if (controllerIndex == 0) study.WriteText("Authoring left hand");
+                else study.WriteText("Authoring right hand");
+            }
+            study.WriteVector(position);
+        }
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
     }
 
     public void OnBothInput(Vector3 leftPosition, Vector3 rightPosition)
@@ -217,6 +282,28 @@ public class VRPlayer : MonoBehaviour
             else
                 OnDrawing(rightPosition);
         }
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
+
+        if (study != null)
+        {
+            if (editing)
+            {
+                study.WriteText("Editing both hands");
+            }
+            else
+            {
+                study.WriteText("Authoring both hands");
+            }
+            study.WriteVector(leftPosition);
+            study.WriteVector(rightPosition);
+        }
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
     }
 
     public void OnFinishingInput(int controllerIndex)
@@ -261,6 +348,20 @@ public class VRPlayer : MonoBehaviour
         }
 
         editing = false;
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
+
+        if (study != null)
+        {
+            study.WriteText("Input complete");
+            study.EndWriting();
+        }
+
+        /****************************************************************/
+        /*                       User Study use                         */
+        /****************************************************************/
     }
 
     public void ClearStrokes()
@@ -295,6 +396,8 @@ public class VRPlayer : MonoBehaviour
 
         leftEditingIndex = -1;
         rightEditingIndex = -1;
+
+        study = FindObjectOfType<UserStudy>();
     }
 
     // Update is called once per frame

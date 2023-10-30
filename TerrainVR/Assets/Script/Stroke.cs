@@ -250,7 +250,7 @@ public class Stroke : MonoBehaviour
         {
             if (rightIndex == -100)
             {
-                if (Vector3.Distance(rightPosition, leftEnd) < 20f)
+                if (Vector3.Distance(rightPosition, leftEnd) < 40f)
                 {
                     Vector3 d = rightPosition - positions[slopeIndex];
                     d.y = 0f;
@@ -277,7 +277,7 @@ public class Stroke : MonoBehaviour
             }
             else if (rightIndex == -101)
             {
-                if (Vector3.Distance(rightPosition, rightEnd) < 20f)
+                if (Vector3.Distance(rightPosition, rightEnd) < 40f)
                 {
                     Vector3 d = rightPosition - positions[slopeIndex];
                     d.y = 0f;

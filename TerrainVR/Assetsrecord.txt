@@ -1,0 +1,682 @@
+User 0: 
+Authoring right hand Time step: 2.444509
+User 0: 
+(-68.26601, -63.92037, 69.43192) Time step: 2.444509
+User 0: 
+Authoring right hand Time step: 2.444509
+User 0: 
+(-68.26601, -63.92037, 69.43192) Time step: 2.444509
+User 0: 
+Authoring right hand Time step: 2.473845
+User 0: 
+(-68.57477, -63.81916, 69.06261) Time step: 2.473845
+User 0: 
+Authoring right hand Time step: 2.486497
+User 0: 
+(-69.15494, -63.61034, 68.32853) Time step: 2.486497
+User 0: 
+Authoring right hand Time step: 2.499993
+User 0: 
+(-69.38287, -63.22821, 68.10464) Time step: 2.499993
+User 0: 
+Authoring right hand Time step: 2.513681
+User 0: 
+(-69.38287, -63.22821, 68.10464) Time step: 2.513681
+User 0: 
+Authoring right hand Time step: 2.528305
+User 0: 
+(-69.51399, -63.0084, 67.97585) Time step: 2.528305
+User 0: 
+Authoring right hand Time step: 2.541536
+User 0: 
+(-69.36417, -62.39355, 68.08185) Time step: 2.541536
+User 0: 
+Authoring right hand Time step: 2.556818
+User 0: 
+(-69.27529, -62.02874, 68.14476) Time step: 2.556818
+User 0: 
+Authoring right hand Time step: 2.574146
+User 0: 
+(-68.99277, -61.13937, 68.53454) Time step: 2.574146
+User 0: 
+Authoring right hand Time step: 2.583304
+User 0: 
+(-68.99277, -61.13937, 68.53454) Time step: 2.583304
+User 0: 
+Authoring right hand Time step: 2.596481
+User 0: 
+(-68.8119, -60.56996, 68.78411) Time step: 2.596481
+User 0: 
+Authoring right hand Time step: 2.61084
+User 0: 
+(-68.32003, -59.17257, 69.40004) Time step: 2.61084
+User 0: 
+Authoring right hand Time step: 2.625291
+User 0: 
+(-67.9514, -58.12532, 69.86164) Time step: 2.625291
+User 0: 
+Authoring right hand Time step: 2.638194
+User 0: 
+(-66.62701, -55.22431, 70.45711) Time step: 2.638194
+User 0: 
+Authoring right hand Time step: 2.652105
+User 0: 
+(-65.71296, -53.22216, 70.86807) Time step: 2.652105
+User 0: 
+Authoring right hand Time step: 2.666553
+User 0: 
+(-65.71296, -53.22216, 70.86807) Time step: 2.666553
+User 0: 
+Authoring right hand Time step: 2.680144
+User 0: 
+(-64.25822, -49.92902, 71.81595) Time step: 2.680144
+User 0: 
+Authoring right hand Time step: 2.694079
+User 0: 
+(-63.45559, -48.1121, 72.33892) Time step: 2.694079
+User 0: 
+Authoring right hand Time step: 2.70885
+User 0: 
+(-61.85534, -44.42009, 73.73048) Time step: 2.70885
+User 0: 
+Authoring right hand Time step: 2.722422
+User 0: 
+(-61.0657, -42.59829, 74.41713) Time step: 2.722422
+User 0: 
+Authoring right hand Time step: 2.73609
+User 0: 
+(-58.93466, -38.28402, 75.53003) Time step: 2.73609
+User 0: 
+Authoring right hand Time step: 2.749836
+User 0: 
+(-58.93466, -38.28402, 75.53003) Time step: 2.749836
+User 0: 
+Authoring right hand Time step: 2.76386
+User 0: 
+(-57.97528, -36.34179, 76.03104) Time step: 2.76386
+User 0: 
+Authoring right hand Time step: 2.778095
+User 0: 
+(-56.01035, -32.86463, 77.51587) Time step: 2.778095
+User 0: 
+Authoring right hand Time step: 2.791667
+User 0: 
+(-55.17109, -31.37946, 78.15009) Time step: 2.791667
+User 0: 
+Authoring right hand Time step: 2.805893
+User 0: 
+(-53.19894, -26.69867, 78.76823) Time step: 2.805893
+User 0: 
+Authoring right hand Time step: 2.819929
+User 0: 
+(-52.37926, -24.75321, 79.02515) Time step: 2.819929
+User 0: 
+Authoring right hand Time step: 2.833559
+User 0: 
+(-52.37926, -24.75321, 79.02515) Time step: 2.833559
+User 0: 
+Authoring right hand Time step: 2.847647
+User 0: 
+(-50.34478, -20.99748, 78.81789) Time step: 2.847647
+User 0: 
+Authoring right hand Time step: 2.861687
+User 0: 
+(-49.5249, -19.48394, 78.73437) Time step: 2.861687
+User 0: 
+Authoring right hand Time step: 2.875707
+User 0: 
+(-47.88803, -16.28321, 79.60448) Time step: 2.875707
+User 0: 
+Authoring right hand Time step: 2.889313
+User 0: 
+(-47.22954, -14.9956, 79.95452) Time step: 2.889313
+User 0: 
+Authoring right hand Time step: 2.903798
+User 0: 
+(-45.50769, -12.7065, 81.44561) Time step: 2.903798
+User 0: 
+Authoring right hand Time step: 2.918207
+User 0: 
+(-45.50769, -12.7065, 81.44561) Time step: 2.918207
+User 0: 
+Authoring right hand Time step: 2.931218
+User 0: 
+(-43.16956, -10.22575, 83.38213) Time step: 2.931218
+User 0: 
+Authoring right hand Time step: 2.945265
+User 0: 
+(-42.23643, -9.23571, 84.15497) Time step: 2.945265
+User 0: 
+Authoring right hand Time step: 2.959131
+User 0: 
+(-41.85204, -8.829967, 84.4715) Time step: 2.959131
+User 0: 
+Authoring right hand Time step: 2.973114
+User 0: 
+(-40.60816, -7.771975, 85.27067) Time step: 2.973114
+User 0: 
+Authoring right hand Time step: 2.987231
+User 0: 
+(-40.0858, -7.327677, 85.60629) Time step: 2.987231
+User 0: 
+Authoring right hand Time step: 3.001059
+User 0: 
+(-40.0858, -7.327677, 85.60629) Time step: 3.001059
+User 0: 
+Authoring right hand Time step: 3.02193
+User 0: 
+(-38.73947, -6.639469, 86.58578) Time step: 3.02193
+User 0: 
+Authoring right hand Time step: 3.029478
+User 0: 
+(-38.1451, -6.335641, 87.0182) Time step: 3.029478
+User 0: 
+Authoring right hand Time step: 3.044217
+User 0: 
+(-37.21518, -6.372469, 87.51682) Time step: 3.044217
+User 0: 
+Authoring right hand Time step: 3.058592
+User 0: 
+(-36.05819, -7.039759, 88.43297) Time step: 3.058592
+User 0: 
+Authoring right hand Time step: 3.072713
+User 0: 
+(-35.50799, -7.357087, 88.86864) Time step: 3.072713
+User 0: 
+Authoring right hand Time step: 3.08619
+User 0: 
+(-35.50799, -7.357087, 88.86864) Time step: 3.08619
+User 0: 
+Authoring right hand Time step: 3.099335
+User 0: 
+(-35.23893, -7.512271, 89.08171) Time step: 3.099335
+User 0: 
+Authoring right hand Time step: 3.11285
+User 0: 
+(-34.28816, -8.208952, 89.3008) Time step: 3.11285
+User 0: 
+Authoring right hand Time step: 3.126807
+User 0: 
+(-32.98485, -9.776464, 89.97425) Time step: 3.126807
+User 0: 
+Authoring right hand Time step: 3.140612
+User 0: 
+(-32.27769, -10.62697, 90.33968) Time step: 3.140612
+User 0: 
+Authoring right hand Time step: 3.154377
+User 0: 
+(-31.07336, -12.73312, 91.49706) Time step: 3.154377
+User 0: 
+Authoring right hand Time step: 3.168312
+User 0: 
+(-31.07336, -12.73312, 91.49706) Time step: 3.168312
+User 0: 
+Authoring right hand Time step: 3.182272
+User 0: 
+(-30.39081, -13.92677, 92.153) Time step: 3.182272
+User 0: 
+Authoring right hand Time step: 3.196073
+User 0: 
+(-28.8435, -16.7111, 93.17262) Time step: 3.196073
+User 0: 
+Authoring right hand Time step: 3.210028
+User 0: 
+(-27.97979, -18.2653, 93.74178) Time step: 3.210028
+User 0: 
+Authoring right hand Time step: 3.223991
+User 0: 
+(-26.41381, -21.33059, 95.41097) Time step: 3.223991
+User 0: 
+Authoring right hand Time step: 3.237777
+User 0: 
+(-25.60572, -22.91234, 96.27232) Time step: 3.237777
+User 0: 
+Authoring right hand Time step: 3.251487
+User 0: 
+(-25.60572, -22.91234, 96.27232) Time step: 3.251487
+User 0: 
+Authoring right hand Time step: 3.265553
+User 0: 
+(-24.02666, -25.93204, 97.84306) Time step: 3.265553
+User 0: 
+Authoring right hand Time step: 3.279863
+User 0: 
+(-23.27513, -27.36922, 98.59064) Time step: 3.279863
+User 0: 
+Authoring right hand Time step: 3.293407
+User 0: 
+(-21.68863, -29.96199, 99.6729) Time step: 3.293407
+User 0: 
+Authoring right hand Time step: 3.307576
+User 0: 
+(-20.96556, -31.14368, 100.1662) Time step: 3.307576
+User 0: 
+Authoring right hand Time step: 3.321327
+User 0: 
+(-19.44093, -33.51217, 101.3006) Time step: 3.321327
+User 0: 
+Authoring right hand Time step: 3.335279
+User 0: 
+(-19.44093, -33.51217, 101.3006) Time step: 3.335279
+User 0: 
+Authoring right hand Time step: 3.349002
+User 0: 
+(-18.75719, -34.57434, 101.8093) Time step: 3.349002
+User 0: 
+Authoring right hand Time step: 3.363334
+User 0: 
+(-18.45395, -35.04544, 102.0349) Time step: 3.363334
+User 0: 
+Authoring right hand Time step: 3.377516
+User 0: 
+(-17.21996, -36.83153, 102.9028) Time step: 3.377516
+User 0: 
+Authoring right hand Time step: 3.391051
+User 0: 
+(-15.5612, -38.6037, 103.8774) Time step: 3.391051
+User 0: 
+Authoring right hand Time step: 3.40515
+User 0: 
+(-14.80383, -39.41287, 104.3224) Time step: 3.40515
+User 0: 
+Authoring right hand Time step: 3.419178
+User 0: 
+(-14.80383, -39.41287, 104.3224) Time step: 3.419178
+User 0: 
+Authoring right hand Time step: 3.432743
+User 0: 
+(-13.16667, -39.90173, 104.4115) Time step: 3.432743
+User 0: 
+Authoring right hand Time step: 3.44696
+User 0: 
+(-12.41129, -40.12729, 104.4526) Time step: 3.44696
+User 0: 
+Authoring right hand Time step: 3.461078
+User 0: 
+(-10.90849, -39.8405, 104.3316) Time step: 3.461078
+User 0: 
+Authoring right hand Time step: 3.475257
+User 0: 
+(-10.1876, -39.70293, 104.2735) Time step: 3.475257
+User 0: 
+Authoring right hand Time step: 3.488376
+User 0: 
+(-8.664459, -38.58989, 103.9994) Time step: 3.488376
+User 0: 
+Authoring right hand Time step: 3.502839
+User 0: 
+(-8.664459, -38.58989, 103.9994) Time step: 3.502839
+User 0: 
+Authoring right hand Time step: 3.516405
+User 0: 
+(-7.891236, -38.02485, 103.8602) Time step: 3.516405
+User 0: 
+Authoring right hand Time step: 3.530085
+User 0: 
+(-6.098855, -36.00143, 102.9663) Time step: 3.530085
+User 0: 
+Authoring right hand Time step: 3.544474
+User 0: 
+(-5.125564, -34.90268, 102.4808) Time step: 3.544474
+User 0: 
+Authoring right hand Time step: 3.559628
+User 0: 
+(-3.220324, -32.78416, 101.8272) Time step: 3.559628
+User 0: 
+Authoring right hand Time step: 3.572526
+User 0: 
+(-2.164181, -31.60979, 101.4649) Time step: 3.572526
+User 0: 
+Authoring right hand Time step: 3.586353
+User 0: 
+(-2.164181, -31.60979, 101.4649) Time step: 3.586353
+User 0: 
+Authoring right hand Time step: 3.599946
+User 0: 
+(-0.0530798, -29.31704, 100.8542) Time step: 3.599946
+User 0: 
+Authoring right hand Time step: 3.613745
+User 0: 
+(1.067031, -28.10056, 100.5302) Time step: 3.613745
+User 0: 
+Authoring right hand Time step: 3.627838
+User 0: 
+(3.192904, -25.96614, 100.036) Time step: 3.627838
+User 0: 
+Authoring right hand Time step: 3.64176
+User 0: 
+(4.255686, -24.89909, 99.7889) Time step: 3.64176
+User 0: 
+Authoring right hand Time step: 3.655808
+User 0: 
+(6.109668, -22.63849, 99.90173) Time step: 3.655808
+User 0: 
+Authoring right hand Time step: 3.669444
+User 0: 
+(6.109668, -22.63849, 99.90173) Time step: 3.669444
+User 0: 
+Authoring right hand Time step: 3.683786
+User 0: 
+(6.999897, -21.55301, 99.95589) Time step: 3.683786
+User 0: 
+Authoring right hand Time step: 3.697554
+User 0: 
+(8.800013, -19.3532, 100.0094) Time step: 3.697554
+User 0: 
+Authoring right hand Time step: 3.711657
+User 0: 
+(9.650176, -18.31428, 100.0346) Time step: 3.711657
+User 0: 
+Authoring right hand Time step: 3.725305
+User 0: 
+(11.67504, -16.35121, 99.96025) Time step: 3.725305
+User 0: 
+Authoring right hand Time step: 3.739331
+User 0: 
+(12.61674, -15.43826, 99.92565) Time step: 3.739331
+User 0: 
+Authoring right hand Time step: 3.753152
+User 0: 
+(12.61674, -15.43826, 99.92565) Time step: 3.753152
+User 0: 
+Authoring right hand Time step: 3.767338
+User 0: 
+(14.56774, -13.99404, 99.54314) Time step: 3.767338
+User 0: 
+Authoring right hand Time step: 3.781199
+User 0: 
+(15.46951, -13.32651, 99.36636) Time step: 3.781199
+User 0: 
+Authoring right hand Time step: 3.795116
+User 0: 
+(17.28121, -12.48884, 99.02498) Time step: 3.795116
+User 0: 
+Authoring right hand Time step: 3.808824
+User 0: 
+(18.12129, -12.10041, 98.86668) Time step: 3.808824
+User 0: 
+Authoring right hand Time step: 3.822941
+User 0: 
+(19.64299, -12.06316, 98.61336) Time step: 3.822941
+User 0: 
+Authoring right hand Time step: 3.836993
+User 0: 
+(19.64299, -12.06316, 98.61336) Time step: 3.836993
+User 0: 
+Authoring right hand Time step: 3.85081
+User 0: 
+(20.36591, -12.04547, 98.49301) Time step: 3.85081
+User 0: 
+Authoring right hand Time step: 3.864798
+User 0: 
+(21.84909, -12.35437, 98.53788) Time step: 3.864798
+User 0: 
+Authoring right hand Time step: 3.879057
+User 0: 
+(22.58036, -12.50667, 98.56001) Time step: 3.879057
+User 0: 
+Authoring right hand Time step: 3.892482
+User 0: 
+(24.00308, -13.42663, 98.78013) Time step: 3.892482
+User 0: 
+Authoring right hand Time step: 3.906799
+User 0: 
+(24.72637, -13.89431, 98.89205) Time step: 3.906799
+User 0: 
+Authoring right hand Time step: 3.920563
+User 0: 
+(24.72637, -13.89431, 98.89205) Time step: 3.920563
+User 0: 
+Authoring right hand Time step: 3.93454
+User 0: 
+(26.18361, -15.27381, 99.13539) Time step: 3.93454
+User 0: 
+Authoring right hand Time step: 3.948202
+User 0: 
+(26.95531, -16.00433, 99.26427) Time step: 3.948202
+User 0: 
+Authoring right hand Time step: 3.962426
+User 0: 
+(28.55481, -17.88231, 99.40434) Time step: 3.962426
+User 0: 
+Authoring right hand Time step: 3.976869
+User 0: 
+(29.42771, -18.90717, 99.48078) Time step: 3.976869
+User 0: 
+Authoring right hand Time step: 3.990361
+User 0: 
+(31.18328, -21.21505, 99.6748) Time step: 3.990361
+User 0: 
+Authoring right hand Time step: 4.004361
+User 0: 
+(31.18328, -21.21505, 99.6748) Time step: 4.004361
+User 0: 
+Authoring right hand Time step: 4.018223
+User 0: 
+(32.13385, -22.46467, 99.77987) Time step: 4.018223
+User 0: 
+Authoring right hand Time step: 4.032012
+User 0: 
+(34.0171, -24.98115, 99.67072) Time step: 4.032012
+User 0: 
+Authoring right hand Time step: 4.046245
+User 0: 
+(34.9562, -26.23599, 99.61629) Time step: 4.046245
+User 0: 
+Authoring right hand Time step: 4.059999
+User 0: 
+(36.82181, -28.82153, 99.42064) Time step: 4.059999
+User 0: 
+Authoring right hand Time step: 4.073761
+User 0: 
+(37.7302, -30.08046, 99.32536) Time step: 4.073761
+User 0: 
+Authoring right hand Time step: 4.088077
+User 0: 
+(37.7302, -30.08046, 99.32536) Time step: 4.088077
+User 0: 
+Authoring right hand Time step: 4.101751
+User 0: 
+(39.61221, -32.66807, 98.88702) Time step: 4.101751
+User 0: 
+Authoring right hand Time step: 4.115732
+User 0: 
+(40.49783, -33.88572, 98.68078) Time step: 4.115732
+User 0: 
+Authoring right hand Time step: 4.129492
+User 0: 
+(42.67219, -36.38064, 98.19556) Time step: 4.129492
+User 0: 
+Authoring right hand Time step: 4.143559
+User 0: 
+(43.67125, -37.527, 97.97263) Time step: 4.143559
+User 0: 
+Authoring right hand Time step: 4.157533
+User 0: 
+(43.67125, -37.527, 97.97263) Time step: 4.157533
+User 0: 
+Authoring right hand Time step: 4.1713
+User 0: 
+(45.99787, -40.25421, 97.56561) Time step: 4.1713
+User 0: 
+Authoring right hand Time step: 4.18553
+User 0: 
+(47.04235, -41.47852, 97.38287) Time step: 4.18553
+User 0: 
+Authoring right hand Time step: 4.199337
+User 0: 
+(49.45835, -44.00825, 96.94307) Time step: 4.199337
+User 0: 
+Authoring right hand Time step: 4.213099
+User 0: 
+(50.51894, -45.11879, 96.75) Time step: 4.213099
+User 0: 
+Authoring right hand Time step: 4.227292
+User 0: 
+(52.71575, -47.3666, 96.37549) Time step: 4.227292
+User 0: 
+Authoring right hand Time step: 4.241095
+User 0: 
+(52.71575, -47.3666, 96.37549) Time step: 4.241095
+User 0: 
+Authoring right hand Time step: 4.254959
+User 0: 
+(53.66747, -48.34043, 96.21322) Time step: 4.254959
+User 0: 
+Authoring right hand Time step: 4.268947
+User 0: 
+(55.48372, -49.75674, 95.68852) Time step: 4.268947
+User 0: 
+Authoring right hand Time step: 4.283082
+User 0: 
+(56.27327, -50.37244, 95.46042) Time step: 4.283082
+User 0: 
+Authoring right hand Time step: 4.29685
+User 0: 
+(57.40482, -51.19262, 94.50906) Time step: 4.29685
+User 0: 
+Authoring right hand Time step: 4.310653
+User 0: 
+(57.91171, -51.56005, 94.08288) Time step: 4.310653
+User 0: 
+Authoring right hand Time step: 4.324701
+User 0: 
+(57.91171, -51.56005, 94.08288) Time step: 4.324701
+User 0: 
+Authoring right hand Time step: 4.338714
+User 0: 
+(58.93953, -52.11467, 93.1959) Time step: 4.338714
+User 0: 
+Authoring right hand Time step: 4.352368
+User 0: 
+(59.4202, -52.37403, 92.78107) Time step: 4.352368
+User 0: 
+Authoring right hand Time step: 4.366551
+User 0: 
+(60.70426, -52.87342, 91.98128) Time step: 4.366551
+User 0: 
+Input complete Time step: 4.380643
+User 0: 
+Authoring left hand Time step: 5.919635
+User 0: 
+(-74.31681, -43.33651, 30.01615) Time step: 5.919635
+User 0: 
+Authoring left hand Time step: 5.919635
+User 0: 
+(-74.31681, -43.33651, 30.01615) Time step: 5.919635
+User 0: 
+Authoring left hand Time step: 5.933902
+User 0: 
+(-74.31681, -43.33651, 30.01615) Time step: 5.933902
+User 0: 
+Authoring left hand Time step: 5.948645
+User 0: 
+(-74.14217, -43.11568, 29.67622) Time step: 5.948645
+User 0: 
+Authoring left hand Time step: 5.962202
+User 0: 
+(-74.02419, -42.96649, 29.44658) Time step: 5.962202
+User 0: 
+Authoring left hand Time step: 5.974805
+User 0: 
+(-73.64765, -42.88641, 29.17595) Time step: 5.974805
+User 0: 
+Authoring left hand Time step: 5.988623
+User 0: 
+(-73.39501, -42.83267, 28.99438) Time step: 5.988623
+User 0: 
+Authoring left hand Time step: 6.001918
+User 0: 
+(-72.95148, -42.6891, 28.75972) Time step: 6.001918
+User 0: 
+Authoring left hand Time step: 6.015682
+User 0: 
+(-72.95148, -42.6891, 28.75972) Time step: 6.015682
+User 0: 
+Authoring left hand Time step: 6.029341
+User 0: 
+(-72.65405, -42.59281, 28.60235) Time step: 6.029341
+User 0: 
+Authoring left hand Time step: 6.043389
+User 0: 
+(-72.37425, -42.50957, 28.47497) Time step: 6.043389
+User 0: 
+Authoring left hand Time step: 6.057572
+User 0: 
+(-72.18586, -42.45353, 28.38922) Time step: 6.057572
+User 0: 
+Authoring left hand Time step: 6.071071
+User 0: 
+(-72.057, -42.31789, 28.36581) Time step: 6.071071
+User 0: 
+Authoring left hand Time step: 6.085074
+User 0: 
+(-72.057, -42.31789, 28.36581) Time step: 6.085074
+User 0: 
+Authoring left hand Time step: 6.098988
+User 0: 
+(-71.96976, -42.22605, 28.34996) Time step: 6.098988
+User 0: 
+Authoring left hand Time step: 6.112842
+User 0: 
+(-71.89575, -42.16598, 28.31522) Time step: 6.112842
+User 0: 
+Authoring left hand Time step: 6.127007
+User 0: 
+(-71.84499, -42.12478, 28.29139) Time step: 6.127007
+User 0: 
+Input complete Time step: 6.140843
+User 0: 
+Authoring left hand Time step: 6.559185
+User 0: 
+(-73.18864, -42.15422, 28.74398) Time step: 6.559185
+User 0: 
+Authoring left hand Time step: 6.559185
+User 0: 
+(-73.18864, -42.15422, 28.74398) Time step: 6.559185
+User 0: 
+Authoring left hand Time step: 6.573185
+User 0: 
+(-73.13975, -42.15439, 28.7892) Time step: 6.573185
+User 0: 
+Authoring left hand Time step: 6.587049
+User 0: 
+(-73.13975, -42.15439, 28.7892) Time step: 6.587049
+User 0: 
+Authoring left hand Time step: 6.601025
+User 0: 
+(-73.10025, -42.15453, 28.82573) Time step: 6.601025
+User 0: 
+Authoring left hand Time step: 6.614754
+User 0: 
+(-73.0474, -42.16566, 28.90688) Time step: 6.614754
+User 0: 
+Authoring left hand Time step: 6.628433
+User 0: 
+(-73.00104, -42.17543, 28.97808) Time step: 6.628433
+User 0: 
+Authoring left hand Time step: 6.642589
+User 0: 
+(-72.91619, -42.17792, 29.06924) Time step: 6.642589
+User 0: 
+Authoring left hand Time step: 6.656891
+User 0: 
+(-72.83733, -42.18024, 29.15395) Time step: 6.656891
+User 0: 
+Authoring left hand Time step: 6.67056
+User 0: 
+(-72.83733, -42.18024, 29.15395) Time step: 6.67056
+User 0: 
+Authoring left hand Time step: 6.684803
+User 0: 
+(-72.73711, -42.21281, 29.19101) Time step: 6.684803
+User 0: 
+Authoring left hand Time step: 6.69868
+User 0: 
+(-72.65141, -42.24066, 29.2227) Time step: 6.69868
+User 0: 
+Authoring left hand Time step: 6.713206
+User 0: 
+(-72.59456, -42.2986, 29.26606) Time step: 6.713206
+User 0: 
+Input complete Time step: 6.726954

@@ -26,6 +26,9 @@ public class TerrainModifier : MonoBehaviour
 
     private IWorker worker;
 
+
+    private int count;
+
     public void LoadModel()
     {
         model = ModelLoader.Load(ONNXModel);
@@ -157,7 +160,7 @@ public class TerrainModifier : MonoBehaviour
 
         byte[] bytes = tex.EncodeToPNG();
 
-        System.IO.File.WriteAllBytes(Application.dataPath + "/h.png", bytes);
+        //System.IO.File.WriteAllBytes(Application.dataPath + "/h.png", bytes);
 
         float[] values = new float[196608];
 
@@ -188,14 +191,25 @@ public class TerrainModifier : MonoBehaviour
 
         byte[] bytes = tex.EncodeToPNG();
 
-        System.IO.File.WriteAllBytes(Application.dataPath + "/h0.png", bytes);
+        UserStudy study = FindObjectOfType<UserStudy>();
+
+        if (study != null)
+        {
+            count++;
+            string name = "/user";
+            name += study.userIndex.ToString();
+            name += "-";
+            name += count.ToString();
+            name += ".png";
+            System.IO.File.WriteAllBytes(Application.dataPath + name, bytes); 
+        }
 
         return tex;
     }
 
     void WriteTerrainData(Texture2D tex, Texture2D baseTex)
     {
-        Texture2D atex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
+        /*Texture2D atex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
         for (int y = 0; y < terrainData.heightmapResolution; y++)
         {
             for (int x = 0; x < terrainData.heightmapResolution; x++)
@@ -206,7 +220,7 @@ public class TerrainModifier : MonoBehaviour
 
         byte[] bytes = atex.EncodeToPNG();
 
-        System.IO.File.WriteAllBytes(Application.dataPath + "/a.png", bytes);
+        System.IO.File.WriteAllBytes(Application.dataPath + "/a.png", bytes);*/
 
         float[,] originHeights = terrainData.GetHeights(0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
         float[,] newHeights = new float[terrainData.heightmapResolution, terrainData.heightmapResolution];

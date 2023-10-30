@@ -5,7 +5,7 @@ using UnityEngine;
 public sealed class TerrainTool : MonoBehaviour
 {
 
-    public Terrain _targetTerrain;
+    public Terrain targetTerrain;
     private float[,] virtualHeights;
     private float[,] virtualBaseHeights;
     private float[,] alphas;
@@ -17,7 +17,7 @@ public sealed class TerrainTool : MonoBehaviour
 
     private void Start()
     {
-        _targetTerrain = GameObject.FindObjectOfType<Terrain>();
+        targetTerrain = GameObject.FindObjectOfType<Terrain>();
         virtualHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
         virtualBaseHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
 
@@ -31,12 +31,12 @@ public sealed class TerrainTool : MonoBehaviour
             }
         }
 
-        _targetTerrain.terrainData.SetHeights(0, 0, virtualHeights);
+        targetTerrain.terrainData.SetHeights(0, 0, virtualHeights);
 
         alphas = new float[GetHeightmapResolution(), GetHeightmapResolution()];
     }
 
-    private TerrainData GetTerrainData() => _targetTerrain.terrainData;
+    private TerrainData GetTerrainData() => targetTerrain.terrainData;
 
     private int GetHeightmapResolution() => GetTerrainData().heightmapResolution;
 
@@ -44,7 +44,7 @@ public sealed class TerrainTool : MonoBehaviour
 
     public Vector3 WorldToTerrainPosition(Vector3 worldPosition)
     {
-        var terrainPosition = worldPosition - _targetTerrain.GetPosition();
+        var terrainPosition = worldPosition - targetTerrain.GetPosition();
 
         var terrainSize = GetTerrainSize();
 
@@ -181,8 +181,8 @@ public sealed class TerrainTool : MonoBehaviour
 
         var terrainData = GetTerrainData();
 
-        float brushHeight = (worldPosition.y - _targetTerrain.transform.position.y) / terrainData.size.y;
-        float originHeight = (height - _targetTerrain.transform.position.y) / terrainData.size.y;
+        float brushHeight = (worldPosition.y - targetTerrain.transform.position.y) / terrainData.size.y;
+        float originHeight = (height - targetTerrain.transform.position.y) / terrainData.size.y;
 
         Vector3 direction = new Vector3(derivative.x, 0f, derivative.z);
         Vector3 deviation = new Vector3(0f, 0f, 0f);
@@ -258,8 +258,8 @@ public sealed class TerrainTool : MonoBehaviour
 
         var terrainData = GetTerrainData();
 
-        float currentHeight = (worldPosition.y - _targetTerrain.transform.position.y) / terrainData.size.y;
-        float originHeight = (initialPosition.y - _targetTerrain.transform.position.y) / terrainData.size.y;
+        float currentHeight = (worldPosition.y - targetTerrain.transform.position.y) / terrainData.size.y;
+        float originHeight = (initialPosition.y - targetTerrain.transform.position.y) / terrainData.size.y;
         float height = 0f;
 
         int start, end;
