@@ -64,7 +64,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetTerrain: {fileID: 0}
-  terrainOffset: 0
+  terrainOffset: 20
 --- !u!114 &904725421917684284
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -74,14 +74,14 @@ public class VRPlayer : MonoBehaviour
         {
             position = s.GetPosition(i);
 
-            offset = position.y - terrainTool._targetTerrain.transform.position.y;
-            brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
-
             int startIndex = Mathf.Max(0, i - 20);
             int endIndex = Mathf.Min(s.GetPositionCount() - 1, i + 20);
 
             if (s.filled)
             {
+                offset = position.y - terrainTool._targetTerrain.transform.position.y;
+                brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
+
                 terrainTool.RaiseTerrain(position,
                                          Mathf.Abs(offset), brushSize,
                                          s.GetLeftBrushSize(), s.GetRightBrushSize(),
@@ -89,9 +89,29 @@ public class VRPlayer : MonoBehaviour
             }
             else
             {
-                terrainTool.RaiseTerrain(position,
-                                         Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
-                                         s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
+                RaycastHit hit;
+
+                if (Physics.Raycast(new Vector3(position.x, 500f, position.z), Vector3.down * 500f, out hit))
+                {
+                    if (hit.point.y < position.y)
+                    {
+                        offset = position.y - terrainTool._targetTerrain.transform.position.y;
+                        brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
+
+                        terrainTool.RaiseTerrain(position,
+                                                 Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                                 s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
+                    }
+                    else
+                    {
+                        offset = position.y - hit.point.y;
+                        brushSize = Mathf.Abs(offset) * 2f;
+
+                        terrainTool.LowerTerrain(position,
+                                                 hit.point.y, brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(),
+                                                 s.GetDerivative(i));
+                    }
+                }
             }
         }
 

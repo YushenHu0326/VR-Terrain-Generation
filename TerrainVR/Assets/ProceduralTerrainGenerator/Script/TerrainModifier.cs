@@ -123,9 +123,9 @@ public class TerrainModifier : MonoBehaviour
                     else
                         r = 0.3f;
                 }*/
-                r *= 8f;
+                r *= 10f;
                 r = Mathf.Floor(r);
-                r /= 10f;
+                r /= 12f;
 
                 tex.SetPixel(w, h, new Color(r, r, r));
             }
