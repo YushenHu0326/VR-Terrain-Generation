@@ -8,14 +8,18 @@ public class TerrainModifier : MonoBehaviour
 {
     private Terrain terrain;
     private TerrainData terrainData;
-    private float maxHeight;
-    private float minHeight;
+    private float maxHeight, minHeight;
+    private float maxBaseHeight, minBaseHeight;
     private float maxColor;
     private int terrainType;
 
     public float[,] heights;
+    public float[,] baseHeights;
     public float[,] alphas;
     public int xOffset, yOffset, range;
+
+    public bool hasGroundHeights;
+    public bool hasBaseHeights;
 
     private Model model;
     public NNModel ONNXModel;
@@ -33,18 +37,41 @@ public class TerrainModifier : MonoBehaviour
     {
         terrain = Object.FindObjectOfType<Terrain>();
         terrainData = terrain.terrainData;
-        maxHeight = 0.01f;
-        minHeight = 1.01f;
 
-        for (int y = 0; y < terrainData.heightmapResolution; y++)
+        if (hasGroundHeights)
         {
-            for (int x = 0; x < terrainData.heightmapResolution; x++)
+            maxHeight = 0f;
+            minHeight = 1.01f;
+
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
             {
-                if (heights[y + yOffset, x + xOffset] > maxHeight) 
-                    maxHeight = heights[y + yOffset, x + xOffset];
-                if (heights[y + yOffset, x + xOffset] < minHeight) 
-                    minHeight = heights[y + yOffset, x + xOffset];
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    if (heights[y + yOffset, x + xOffset] > maxHeight)
+                        maxHeight = heights[y + yOffset, x + xOffset];
+                    if (heights[y + yOffset, x + xOffset] < minHeight)
+                        minHeight = heights[y + yOffset, x + xOffset];
+                }
             }
+        }
+
+        if (hasBaseHeights)
+        {
+            maxBaseHeight = 0f;
+            minBaseHeight = 1.01f;
+
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    if (baseHeights[y + yOffset, x + xOffset] > maxBaseHeight)
+                        maxBaseHeight = baseHeights[y + yOffset, x + xOffset];
+                    if (baseHeights[y + yOffset, x + xOffset] < minBaseHeight)
+                        minBaseHeight = baseHeights[y + yOffset, x + xOffset];
+                }
+            }
+
+            if (minBaseHeight < 0f) minBaseHeight = 0f;
         }
     }
 
@@ -57,6 +84,22 @@ public class TerrainModifier : MonoBehaviour
             for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 tex.SetPixel(x, y, new Color((heights[y + yOffset, x + xOffset] - minHeight) / (maxHeight - minHeight),
+                                             0f, 0f, 1));
+            }
+        }
+
+        return tex;
+    }
+
+    Texture2D RetrieveBaseTerrainHeightmap()
+    {
+        Texture2D tex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
+
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
+            {
+                tex.SetPixel(x, y, new Color((baseHeights[y + yOffset, x + xOffset] - minBaseHeight) / (maxBaseHeight - minBaseHeight),
                                              0f, 0f, 1));
             }
         }
@@ -80,7 +123,7 @@ public class TerrainModifier : MonoBehaviour
         return tex;
     }
 
-    float[] ProcessHeightmap(Texture2D tex, Texture2D strokeTex)
+    float[] ProcessHeightmap(Texture2D tex)
     {
         tex.Apply();
         RenderTexture rt = RenderTexture.GetTemporary(256, 256, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
@@ -91,16 +134,6 @@ public class TerrainModifier : MonoBehaviour
         tex.filterMode = FilterMode.Bilinear;
         tex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
         tex.Apply();
-
-        strokeTex.Apply();
-        rt = RenderTexture.GetTemporary(256, 256, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
-        RenderTexture.active = rt;
-
-        Graphics.Blit(strokeTex, rt);
-        strokeTex.Reinitialize(256, 256, strokeTex.format, true);
-        strokeTex.filterMode = FilterMode.Bilinear;
-        strokeTex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
-        strokeTex.Apply();
 
         for (int h = 0; h < 256; h++)
         {
@@ -158,7 +191,7 @@ public class TerrainModifier : MonoBehaviour
         return tex;
     }
 
-    void WriteTerrainData(Texture2D tex)
+    void WriteTerrainData(Texture2D tex, Texture2D baseTex)
     {
         Texture2D atex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
         for (int y = 0; y < terrainData.heightmapResolution; y++)
@@ -178,21 +211,46 @@ public class TerrainModifier : MonoBehaviour
 
         maxColor = 0f;
 
-        for (int y = 0; y < terrainData.heightmapResolution; y++)
+        if (hasBaseHeights)
         {
-            for (int x = 0; x < terrainData.heightmapResolution; x++)
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
             {
-                if (tex.GetPixel(x, y).r > maxColor) maxColor = tex.GetPixel(x, y).r;
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    if (baseTex.GetPixel(x, y).r > maxColor) maxColor = baseTex.GetPixel(x, y).r;
+                }
+            }
+
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    newHeights[y, x] = baseTex.GetPixel(x, y).r / maxColor * (maxBaseHeight - minBaseHeight) + minBaseHeight;
+                }
             }
         }
 
-        for (int y = 0; y < terrainData.heightmapResolution; y++)
-        {
-            for (int x = 0; x < terrainData.heightmapResolution; x++)
-            {
-                newHeights[y, x] = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
+        maxColor = 0f;
 
-                newHeights[y, x] += Mathf.PerlinNoise((float)x * 2f, (float)y * 2f) / terrainData.size.y * alphas[y + yOffset, x + xOffset];
+        if (hasGroundHeights)
+        {
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    if (tex.GetPixel(x, y).r > maxColor) maxColor = tex.GetPixel(x, y).r;
+                }
+            }
+
+            for (int y = 0; y < terrainData.heightmapResolution; y++)
+            {
+                for (int x = 0; x < terrainData.heightmapResolution; x++)
+                {
+                    if (hasBaseHeights)
+                        newHeights[y, x] += tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight);
+                    else
+                        newHeights[y, x] = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
+                }
             }
         }
 
@@ -203,31 +261,63 @@ public class TerrainModifier : MonoBehaviour
     {
         LoadModel();
         GrabTerrainData();
-        Texture2D tex = RetrieveTerrainHeightmap();
-        Texture2D strokeTex = RetrieveTerrainStroke();
-        float[] values = ProcessHeightmap(tex, strokeTex);
 
-        Tensor input = new Tensor(1, 256, 256, 3, values);
-        Tensor output = worker.Execute(input).PeekOutput();
-        float[] newValues = output.AsFloats();
-        input.Dispose();
-        worker?.Dispose();
+        Texture2D modifiedTex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+        Texture2D modifiedBaseTex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
 
-        Texture2D newTex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
-
-        for (int h = 0; h < 256; h++)
+        if (hasGroundHeights)
         {
-            for (int w = 0; w < 256; w++)
+            Texture2D tex = RetrieveTerrainHeightmap();
+            float[] values = ProcessHeightmap(tex);
+
+            Tensor input = new Tensor(1, 256, 256, 3, values);
+            Tensor output = worker.Execute(input).PeekOutput();
+            float[] newValues = output.AsFloats();
+            input.Dispose();
+
+            Texture2D newTex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+
+            for (int h = 0; h < 256; h++)
             {
-                newTex.SetPixel(w, h, new Color(newValues[w * 3 + h * 256 * 3] * 0.5f + 0.5f,
-                                                newValues[w * 3 + h * 256 * 3 + 1] * 0.5f + 0.5f,
-                                                newValues[w * 3 + h * 256 * 3 + 2] * 0.5f + 0.5f));
+                for (int w = 0; w < 256; w++)
+                {
+                    newTex.SetPixel(w, h, new Color(newValues[w * 3 + h * 256 * 3] * 0.5f + 0.5f,
+                                                    newValues[w * 3 + h * 256 * 3 + 1] * 0.5f + 0.5f,
+                                                    newValues[w * 3 + h * 256 * 3 + 2] * 0.5f + 0.5f));
+                }
             }
+
+            modifiedTex = RestoreHeightmap(newTex);
         }
 
-        Texture2D modifiedTex = RestoreHeightmap(newTex);
+        if (hasBaseHeights)
+        {
+            Texture2D tex = RetrieveBaseTerrainHeightmap();
+            float[] values = ProcessHeightmap(tex);
 
-        WriteTerrainData(modifiedTex);
+            Tensor input = new Tensor(1, 256, 256, 3, values);
+            Tensor output = worker.Execute(input).PeekOutput();
+            float[] newValues = output.AsFloats();
+            input.Dispose();
+
+            Texture2D newTex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+
+            for (int h = 0; h < 256; h++)
+            {
+                for (int w = 0; w < 256; w++)
+                {
+                    newTex.SetPixel(w, h, new Color(newValues[w * 3 + h * 256 * 3] * 0.5f + 0.5f,
+                                                    newValues[w * 3 + h * 256 * 3 + 1] * 0.5f + 0.5f,
+                                                    newValues[w * 3 + h * 256 * 3 + 2] * 0.5f + 0.5f));
+                }
+            }
+
+            modifiedBaseTex = RestoreHeightmap(newTex);
+        }
+
+        worker?.Dispose();
+
+        WriteTerrainData(modifiedTex, modifiedBaseTex);
 
         PaintTerrain();
     }

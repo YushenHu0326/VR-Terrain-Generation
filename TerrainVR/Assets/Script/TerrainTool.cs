@@ -7,15 +7,19 @@ public sealed class TerrainTool : MonoBehaviour
 
     public Terrain _targetTerrain;
     private float[,] virtualHeights;
+    private float[,] virtualBaseHeights;
     private float[,] alphas;
     public float terrainOffset = 0f;
 
     private float _sampledHeight;
 
+    private bool hasBaseHeights, hasGroundHeights;
+
     private void Start()
     {
         _targetTerrain = GameObject.FindObjectOfType<Terrain>();
         virtualHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
+        virtualBaseHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
 
         float terrainSizeY = GetTerrainSize().y;
         for (int y = 0; y < GetHeightmapResolution(); y++)
@@ -23,6 +27,7 @@ public sealed class TerrainTool : MonoBehaviour
             for (int x = 0; x < GetHeightmapResolution(); x++)
             {
                 virtualHeights[y, x] = terrainOffset / terrainSizeY;
+                virtualBaseHeights[y, x] = terrainOffset / terrainSizeY;
             }
         }
 
@@ -72,6 +77,9 @@ public sealed class TerrainTool : MonoBehaviour
 
     public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, Vector3 derivative, Vector3 leftSlope, Vector3 rightSlope, Vector3 start, Vector3 end)
     {
+        Debug.Log("1");
+        if (!hasGroundHeights) hasGroundHeights = true;
+
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
 
         var brushPosition = GetBrushPosition(worldPosition, maxBrushSize, maxBrushSize);
@@ -211,8 +219,18 @@ public sealed class TerrainTool : MonoBehaviour
 
                 float desireHeight = Mathf.Lerp(brushHeight, originHeight, distance);
 
-                if (virtualHeights[y + brushPosition.y, x + brushPosition.x] > desireHeight)
-                    virtualHeights[y + brushPosition.y, x + brushPosition.x] = desireHeight;
+                if (desireHeight > terrainOffset / terrainData.size.y)
+                {
+                    if (virtualHeights[y + brushPosition.y, x + brushPosition.x] > desireHeight)
+                        virtualHeights[y + brushPosition.y, x + brushPosition.x] = desireHeight;
+                }
+                else
+                {
+                    if (virtualBaseHeights[y + brushPosition.y, x + brushPosition.x] > desireHeight)
+                        virtualBaseHeights[y + brushPosition.y, x + brushPosition.x] = desireHeight;
+
+                    if (!hasBaseHeights) hasBaseHeights = true;
+                }
             }
         }
     }
@@ -249,12 +267,14 @@ public sealed class TerrainTool : MonoBehaviour
                 y = initPositionY + (int)((float)(x - initPositionX) / (float)(worldPositionX - initPositionX) * (worldPositionY - initPositionY));
                 height = originHeight + (currentHeight - originHeight) * (float)(x - initPositionX) / (float)(worldPositionX - initPositionX);
 
-                for (var yy = 0; yy < 15; yy++)
+                for (var yy = 0; yy < 16; yy++)
                 {
-                    for (var xx = 0; xx < 15; xx++)
+                    for (var xx = 0; xx < 16; xx++)
                     {
-                        if (virtualHeights[yy - 10 + y, xx - 10 + x] < height)
-                            virtualHeights[yy - 10 + y, xx - 10 + x] = height;
+                        if (height > terrainOffset / terrainData.size.y)
+                            virtualHeights[yy - 8 + y, xx - 8 + x] = height;
+                        else
+                            virtualBaseHeights[yy - 8 + y, xx - 8 + x] = height;
                     }
                 }
             }
@@ -271,14 +291,14 @@ public sealed class TerrainTool : MonoBehaviour
                 x = (int)initPositionX + (int)((float)(y - initPositionY) / (float)(worldPositionY - initPositionY) * (worldPositionX - initPositionX));
                 height = originHeight + (currentHeight - originHeight) * (float)(y - initPositionY) / (float)(worldPositionY - initPositionY);
 
-                for (var yy = 0; yy < 20; yy++)
+                for (var yy = 0; yy < 16; yy++)
                 {
-                    for (var xx = 0; xx < 20; xx++)
+                    for (var xx = 0; xx < 16; xx++)
                     {
-                        if (virtualHeights[yy - 10 + y, xx - 10 + x] < height / terrainData.size.y)
-                            virtualHeights[yy - 10 + y, xx - 10 + x] = height / terrainData.size.y;
-                        if (alphas[yy - 10 + y, xx - 10 + x] < 1f)
-                            alphas[yy - 10 + y, xx - 10 + x] = 0.95f;
+                        if (height > terrainOffset / terrainData.size.y)
+                            virtualHeights[yy - 8 + y, xx - 8 + x] = height;
+                        else
+                            virtualBaseHeights[yy - 8 + y, xx - 8 + x] = height;
                     }
                 }
             }
@@ -288,17 +308,25 @@ public sealed class TerrainTool : MonoBehaviour
 
     public void ApplyTerrain()
     {
+        var terrainData = GetTerrainData();
+
         TerrainModifier modifier = Object.FindObjectOfType<TerrainModifier>();
         modifier.heights = virtualHeights;
+        modifier.baseHeights = virtualBaseHeights;
+        modifier.hasGroundHeights = hasGroundHeights;
+        modifier.hasBaseHeights = hasBaseHeights;
         modifier.alphas = alphas;
 
         modifier.ModifyTerrain();
-        //GetTerrainData().SetHeights(0, 0, virtualHeights);
+        //GetTerrainData().SetHeights(0, 0, virtualBaseHeights);
     }
     
 
     public void ClearTerrain()
     {
+        hasBaseHeights = false;
+        hasGroundHeights = false;
+
         var terrainData = GetTerrainData();
 
         int r = terrainData.heightmapResolution;
@@ -308,6 +336,7 @@ public sealed class TerrainTool : MonoBehaviour
             for (var x = 0; x < r; x++)
             {
                 virtualHeights[y, x] = terrainOffset / terrainData.size.y;
+                virtualBaseHeights[y, x] = terrainOffset / terrainData.size.y;
                 alphas[y, x] = 0f;
             }
         }

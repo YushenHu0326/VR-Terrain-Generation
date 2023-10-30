@@ -60,9 +60,6 @@ public class VRPlayer : MonoBehaviour
             {
                 position = s.GetPosition(i);
 
-                offset = position.y - terrainTool._targetTerrain.transform.position.y;
-                brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
-
                 if (i != 0)
                 {
                     terrainTool.FillTerrain(position, s.GetPosition(0), 20, 20);
