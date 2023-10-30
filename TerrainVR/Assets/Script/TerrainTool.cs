@@ -169,8 +169,8 @@ public sealed class TerrainTool : MonoBehaviour
 
         var terrainData = GetTerrainData();
 
-        float brushHeight = (worldPosition.y - _targetTerrain.transform.position.y - terrainOffset) / terrainData.size.y;
-        float originHeight = (height - _targetTerrain.transform.position.y - terrainOffset) / terrainData.size.y;
+        float brushHeight = (worldPosition.y - _targetTerrain.transform.position.y) / terrainData.size.y;
+        float originHeight = (height - _targetTerrain.transform.position.y) / terrainData.size.y;
 
         Vector3 direction = new Vector3(derivative.x, 0f, derivative.z);
         Vector3 deviation = new Vector3(0f, 0f, 0f);
@@ -209,7 +209,7 @@ public sealed class TerrainTool : MonoBehaviour
                 distance /= adjustedSize / 2f;
                 distance = Mathf.Clamp(distance, 0f, 1f);
 
-                float desireHeight = Mathf.Lerp(brushHeight + terrainOffset / terrainData.size.y, originHeight + terrainOffset / terrainData.size.y, distance);
+                float desireHeight = Mathf.Lerp(brushHeight, originHeight, distance);
 
                 if (virtualHeights[y + brushPosition.y, x + brushPosition.x] > desireHeight)
                     virtualHeights[y + brushPosition.y, x + brushPosition.x] = desireHeight;
@@ -217,29 +217,7 @@ public sealed class TerrainTool : MonoBehaviour
         }
     }
 
-    public void PaintStroke(Vector3 worldPosition, float baseBrushSize, float leftBrushSize, float rightBrushSize, float value, int width)
-    {
-        int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
-
-        var brushPosition = GetBrushPosition(worldPosition, maxBrushSize, maxBrushSize);
-
-        var brushSize = GetSafeBrushSize(brushPosition.x, brushPosition.y, maxBrushSize, maxBrushSize);
-
-        var terrainData = GetTerrainData();
-
-        for (var y = 0; y < brushSize.y; y++)
-        {
-            for (var x = 0; x < brushSize.x; x++)
-            {
-                if (alphas[y + brushPosition.y, x + brushPosition.x] < 1f)
-                    if (y >= brushSize.y / 2 - width && y <= brushSize.y / 2 + width)
-                        if (x >= brushSize.x / 2 - width && x <= brushSize.x / 2 + width)
-                            alphas[y + brushPosition.y, x + brushPosition.x] = value;
-            }
-        }
-    }
-
-    public void FillTerrain(Vector3 worldPosition, Vector3 initialPosition, float height, int brushWidth, int brushHeight)
+    public void FillTerrain(Vector3 worldPosition, Vector3 initialPosition, int brushWidth, int brushHeight)
     {
         var brushPosition = GetBrushPosition(worldPosition, brushWidth, brushHeight);
         var initBrushPosition = GetBrushPosition(initialPosition, brushWidth, brushHeight);
@@ -253,6 +231,10 @@ public sealed class TerrainTool : MonoBehaviour
 
         var terrainData = GetTerrainData();
 
+        float currentHeight = (worldPosition.y - _targetTerrain.transform.position.y) / terrainData.size.y;
+        float originHeight = (initialPosition.y - _targetTerrain.transform.position.y) / terrainData.size.y;
+        float height = 0f;
+
         int start, end;
 
         if (worldPositionX != initPositionX)
@@ -265,15 +247,14 @@ public sealed class TerrainTool : MonoBehaviour
             for (var x = start; x < end; x++)
             {
                 y = initPositionY + (int)((float)(x - initPositionX) / (float)(worldPositionX - initPositionX) * (worldPositionY - initPositionY));
+                height = originHeight + (currentHeight - originHeight) * (float)(x - initPositionX) / (float)(worldPositionX - initPositionX);
 
                 for (var yy = 0; yy < 15; yy++)
                 {
                     for (var xx = 0; xx < 15; xx++)
                     {
-                        if (virtualHeights[yy - 10 + y, xx - 10 + x] < height / terrainData.size.y)
-                            virtualHeights[yy - 10 + y, xx - 10 + x] = height / terrainData.size.y;
-                        if (alphas[yy - 10 + y, xx - 10 + x] < 1f)
-                            alphas[yy - 10 + y, xx - 10 + x] = 0.95f;
+                        if (virtualHeights[yy - 10 + y, xx - 10 + x] < height)
+                            virtualHeights[yy - 10 + y, xx - 10 + x] = height;
                     }
                 }
             }
@@ -288,6 +269,7 @@ public sealed class TerrainTool : MonoBehaviour
             for (var y = start; y < end; y++)
             {
                 x = (int)initPositionX + (int)((float)(y - initPositionY) / (float)(worldPositionY - initPositionY) * (worldPositionX - initPositionX));
+                height = originHeight + (currentHeight - originHeight) * (float)(y - initPositionY) / (float)(worldPositionY - initPositionY);
 
                 for (var yy = 0; yy < 20; yy++)
                 {

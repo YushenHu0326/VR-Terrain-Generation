@@ -112,17 +112,6 @@ public class TerrainModifier : MonoBehaviour
 
                 r *= ((1f - r) * n * 0.2f + 1f);
 
-                /*if (r < 0.3f)
-                {
-                    r = 0f;
-                }
-                else
-                {
-                    if (strokeTex.GetPixel(w, h).r > 0.1f)
-                        r = strokeTex.GetPixel(w, h).r;
-                    else
-                        r = 0.3f;
-                }*/
                 r *= 10f;
                 r = Mathf.Floor(r);
                 r /= 12f;
