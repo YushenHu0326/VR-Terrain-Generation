@@ -8,6 +8,8 @@ public sealed class TerrainTool : MonoBehaviour
     public Terrain targetTerrain;
     private float[,] virtualHeights;
     private float[,] virtualBaseHeights;
+    private float[,] savedHeights;
+    private float[,] savedBaseHeights;
     private float[,] alphas;
     public float terrainOffset = 0f;
 
@@ -18,6 +20,8 @@ public sealed class TerrainTool : MonoBehaviour
         targetTerrain = GameObject.FindObjectOfType<Terrain>();
         virtualHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
         virtualBaseHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
+        savedHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
+        savedBaseHeights = new float[GetHeightmapResolution(), GetHeightmapResolution()];
 
         float terrainSizeY = GetTerrainSize().y;
         for (int y = 0; y < GetHeightmapResolution(); y++)
@@ -26,6 +30,8 @@ public sealed class TerrainTool : MonoBehaviour
             {
                 virtualHeights[y, x] = terrainOffset / terrainSizeY;
                 virtualBaseHeights[y, x] = terrainOffset / terrainSizeY;
+                savedHeights[y, x] = terrainOffset / terrainSizeY;
+                savedBaseHeights[y, x] = terrainOffset / terrainSizeY;
             }
         }
 
@@ -315,6 +321,21 @@ public sealed class TerrainTool : MonoBehaviour
 
     public void ApplyTerrain()
     {
+        var terrainData = GetTerrainData();
+
+        int r = terrainData.heightmapResolution;
+
+        for (var y = 0; y < r; y++)
+        {
+            for (var x = 0; x < r; x++)
+            {
+                if (savedHeights[y, x] > virtualHeights[y, x])  
+                    virtualHeights[y, x] = savedHeights[y, x];
+                if (savedBaseHeights[y, x] < virtualBaseHeights[y, x]) 
+                    virtualBaseHeights[y, x] = savedBaseHeights[y, x];
+            }
+        }
+
         TerrainModifier modifier = Object.FindObjectOfType<TerrainModifier>();
         modifier.heights = virtualHeights;
         modifier.baseHeights = virtualBaseHeights;
@@ -325,9 +346,27 @@ public sealed class TerrainTool : MonoBehaviour
         modifier.ModifyTerrain();
         //GetTerrainData().SetHeights(0, 0, virtualBaseHeights);
     }
+
+    public void SaveTerrain()
+    {
+        var terrainData = GetTerrainData();
+
+        int r = terrainData.heightmapResolution;
+
+        for (var y = 0; y < r; y++)
+        {
+            for (var x = 0; x < r; x++)
+            {
+                if (virtualHeights[y, x] > savedHeights[y, x])  
+                    savedHeights[y, x] = virtualHeights[y, x];
+                if (virtualBaseHeights[y, x] < savedBaseHeights[y, x]) 
+                    savedBaseHeights[y, x] = virtualBaseHeights[y, x];
+            }
+        }
+    }
     
 
-    public void ClearTerrain()
+    public void ClearTerrain(bool eraseHistory)
     {
         hasBaseHeights = false;
         hasGroundHeights = false;
@@ -342,6 +381,11 @@ public sealed class TerrainTool : MonoBehaviour
             {
                 virtualHeights[y, x] = terrainOffset / terrainData.size.y;
                 virtualBaseHeights[y, x] = terrainOffset / terrainData.size.y;
+                if (eraseHistory)
+                {
+                    savedHeights[y, x] = terrainOffset / terrainData.size.y;
+                    savedBaseHeights[y, x] = terrainOffset / terrainData.size.y;
+                }
                 alphas[y, x] = 0f;
             }
         }

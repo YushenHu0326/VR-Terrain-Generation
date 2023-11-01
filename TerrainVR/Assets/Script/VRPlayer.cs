@@ -52,6 +52,7 @@ public class VRPlayer : MonoBehaviour
     void OnFinishingDrawing(Stroke s)
     {
         if (s == null) return;
+        if (!s.activated) return;
 
         Vector3 position;
         float offset, brushSize;
@@ -301,7 +302,7 @@ public class VRPlayer : MonoBehaviour
         if (editing)
         {
             stroke.OnFinishEditing();
-            terrainTool.ClearTerrain();
+            terrainTool.ClearTerrain(false);
             foreach (Stroke s in strokes)
                 OnFinishingDrawing(s);
         }
@@ -332,7 +333,10 @@ public class VRPlayer : MonoBehaviour
             {
                 stroke.FinishStroke();
                 strokes.Add(stroke);
-                OnFinishingDrawing(stroke);
+
+                terrainTool.ClearTerrain(false);
+                foreach (Stroke s in strokes)
+                    OnFinishingDrawing(s);
                 visualized = true;
             }
         }
@@ -342,6 +346,7 @@ public class VRPlayer : MonoBehaviour
 
     public void ClearStrokes()
     {
+        terrainTool.SaveTerrain();
         Stroke[] ss = FindObjectsOfType<Stroke>();
         foreach (Stroke stroke in ss) stroke.HideStroke();
     }
@@ -350,7 +355,7 @@ public class VRPlayer : MonoBehaviour
     {
         if (terrainTool == null) return;
 
-        terrainTool.ClearTerrain();
+        terrainTool.ClearTerrain(true);
 
         strokes = new List<Stroke>();
         Stroke[] ss = FindObjectsOfType<Stroke>();

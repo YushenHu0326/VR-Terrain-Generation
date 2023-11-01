@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 150, z: 300}
-  m_LocalScale: {x: 50, y: 50, z: 50}
+  m_LocalScale: {x: 30, y: 30, z: 20}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -120,13 +120,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   textures:
-  - {fileID: 2800000, guid: ed256049eab4f284faa66ef5daedd0bf, type: 3}
-  - {fileID: 2800000, guid: 03d959a26c043524bb8982914faa6f3e, type: 3}
-  - {fileID: 2800000, guid: 302a758ec9d93a04fb7fb64725f168aa, type: 3}
-  - {fileID: 2800000, guid: feec852099f337d41b29d1f2ea058b06, type: 3}
-  - {fileID: 2800000, guid: 0f144d911da13d54bb403b3befcab34d, type: 3}
-  - {fileID: 2800000, guid: 3f306d49432f0fb4bbc7b63b04c629e5, type: 3}
   - {fileID: 2800000, guid: ce1dcb8aaf711b04cb01d8608c89a80e, type: 3}
-  - {fileID: 2800000, guid: 2b1f3402b59724b42a4f09d54c66db4f, type: 3}
-  - {fileID: 2800000, guid: e9c127489593c3c40813a13995df71fb, type: 3}
-  - {fileID: 2800000, guid: 4cc51ff7e46e638489e96a1e7876e018, type: 3}
