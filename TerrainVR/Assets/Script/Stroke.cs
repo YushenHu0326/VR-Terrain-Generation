@@ -11,8 +11,6 @@ public class Stroke : MonoBehaviour
     private List<Vector3> positions;
     private Vector3 lastStrokePosition;
 
-    private float[,] height;
-
     private List<Vector3> derivatives;
 
     private float leftBrushSize = 1f;
@@ -68,7 +66,6 @@ public class Stroke : MonoBehaviour
         if (terrainTool != null)
         { 
             terrainOffset = terrainTool.terrainOffset;
-            height = new float[terrainTool.GetHeightmapResolution(), terrainTool.GetHeightmapResolution()];
         }
 
         activated = true;
@@ -422,20 +419,6 @@ public class Stroke : MonoBehaviour
                 }
             }
         }
-    }
-
-    public void SetHeight(int x, int y, float h)
-    {
-        if (height != null)
-            height[x, y] = h;
-    }
-
-    public float GetHeight(int x, int y)
-    {
-        if (height != null)
-            return height[x, y];
-
-        return 0f;
     }
 
     public float Volume()
