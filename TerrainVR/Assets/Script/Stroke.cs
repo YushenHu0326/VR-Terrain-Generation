@@ -146,7 +146,7 @@ public class Stroke : MonoBehaviour
         slopeVisualCue = new GameObject("VisualCue");
         slopeVisualCue.AddComponent<LineRenderer>();
         slopeVisualCue.GetComponent<LineRenderer>().material = lineRenderer.material;
-        slopeVisualCue.GetComponent<LineRenderer>().material.SetColor("_OutlineColor", Color.blue);
+        slopeVisualCue.GetComponent<LineRenderer>().material.SetColor("_OutlineColor", Color.white);
 
         slopeVisualCue.GetComponent<LineRenderer>().positionCount = 5;
 
