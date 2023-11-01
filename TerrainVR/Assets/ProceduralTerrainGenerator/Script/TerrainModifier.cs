@@ -196,7 +196,7 @@ public class TerrainModifier : MonoBehaviour
         if (study != null)
         {
             count++;
-            string name = "/user";
+            string name = "/UserStudy/user";
             name += study.userIndex.ToString();
             name += "-";
             name += count.ToString();

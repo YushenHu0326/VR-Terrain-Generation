@@ -13,59 +13,35 @@ public class UserStudy : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public void WriteText(string text)
-    {
-        if (writer != null)
-        {
-            text += " Time step: ";
-            text += Time.time.ToString();
-
-            writer.WriteLine(text);
-        }
-    }
-
-    public void WriteVector(Vector3 v)
-    {
-        if (writer != null)
-        {
-            string text = "(";
-            text += v.x.ToString();
-            text += ", ";
-            text += v.y.ToString();
-            text += ", ";
-            text += v.z.ToString();
-            text += ")";
-
-            text += " Time step: ";
-            text += Time.time.ToString();
-
-            writer.WriteLine(text);
-        }
-    }
-
-    public void StartWriting()
-    {
-        string path = Application.dataPath + "/record.txt";
+        string path = Application.dataPath + "/UserStudy/record.txt";
         writer = new StreamWriter(path, true);
-        writer.WriteLine("User " + userIndex.ToString() + ": ");
     }
 
-    public void EndWriting()
+    void OnApplicationExit()
+    {
+        writer.Close();
+    }
+
+    public void Write(int modification, int handIndex, Vector3 v)
     {
         if (writer != null)
         {
-            writer.WriteLine("");
-            writer.WriteLine("");
-            writer.Close();
+            string text = "";
+            text += userIndex.ToString();
+            text += " ";
+            text += modification.ToString();
+            text += " ";
+            text += handIndex.ToString();
+            text += " ";
+            text += v.x.ToString();
+            text += " ";
+            text += v.y.ToString();
+            text += " ";
+            text += v.z.ToString();
+            text += " ";
+            text += Time.time.ToString();
+
+            writer.WriteLine(text);
         }
     }
 }

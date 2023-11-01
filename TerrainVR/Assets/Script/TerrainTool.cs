@@ -11,8 +11,6 @@ public sealed class TerrainTool : MonoBehaviour
     private float[,] alphas;
     public float terrainOffset = 0f;
 
-    private float _sampledHeight;
-
     private bool hasBaseHeights, hasGroundHeights;
 
     private void Start()
@@ -38,7 +36,7 @@ public sealed class TerrainTool : MonoBehaviour
 
     private TerrainData GetTerrainData() => targetTerrain.terrainData;
 
-    private int GetHeightmapResolution() => GetTerrainData().heightmapResolution;
+    public int GetHeightmapResolution() => GetTerrainData().heightmapResolution;
 
     private Vector3 GetTerrainSize() => GetTerrainData().size;
 
@@ -75,7 +73,7 @@ public sealed class TerrainTool : MonoBehaviour
         return new Vector2Int(brushWidth, brushHeight);
     }
 
-    public void RaiseTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, float leftBrushCurve, float rightBrushCurve, Vector3 derivative, Vector3 leftSlope, Vector3 rightSlope, Vector3 start, Vector3 end)
+    public void RaiseTerrain(Stroke s, Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, float leftBrushCurve, float rightBrushCurve, Vector3 derivative, Vector3 leftSlope, Vector3 rightSlope, Vector3 start, Vector3 end)
     {
         if (!hasGroundHeights) hasGroundHeights = true;
 
@@ -165,13 +163,13 @@ public sealed class TerrainTool : MonoBehaviour
                 if (angleTemp < 0f) distance = Mathf.Pow(distance, Mathf.Lerp(rightBrushCurve, 1f, Mathf.Abs(angleTemp + 0.5f) * 2f));
                 else distance = Mathf.Pow(distance, Mathf.Lerp(leftBrushCurve, 1f, Mathf.Abs(angleTemp - 0.5f) * 2f));
 
-                if (virtualHeights[y + brushPosition.y, x + brushPosition.x] - terrainOffset / terrainData.size.y < distance * (height - terrainOffset) / terrainData.size.y)
-                    virtualHeights[y + brushPosition.y, x + brushPosition.x] = distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y;
+                if (s.GetHeight(y + brushPosition.y, x + brushPosition.x) < distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y)
+                    s.SetHeight(y + brushPosition.y, x + brushPosition.x, distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y);
             }
         }
     }
 
-    public void LowerTerrain(Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, float leftBrushCurve, float rightBrushCurve, Vector3 derivative)
+    public void LowerTerrain(Stroke s, Vector3 worldPosition, float height, float baseBrushSize, float leftBrushSize, float rightBrushSize, float leftBrushCurve, float rightBrushCurve, Vector3 derivative)
     {
         int maxBrushSize = (int)Mathf.Max(baseBrushSize * leftBrushSize, baseBrushSize * rightBrushSize);
 
@@ -230,15 +228,15 @@ public sealed class TerrainTool : MonoBehaviour
 
                 if (desireHeight > terrainOffset / terrainData.size.y)
                 {
-                    if (virtualHeights[y + brushPosition.y, x + brushPosition.x] > desireHeight)
-                        virtualHeights[y + brushPosition.y, x + brushPosition.x] = desireHeight;
+                    if (!hasBaseHeights) hasBaseHeights = true;
+
+                    if (s.GetHeight(y + brushPosition.y, x + brushPosition.x) > desireHeight)
+                        s.SetHeight(y + brushPosition.y, x + brushPosition.x, desireHeight);
                 }
                 else
                 {
-                    if (virtualBaseHeights[y + brushPosition.y, x + brushPosition.x] > desireHeight)
-                        virtualBaseHeights[y + brushPosition.y, x + brushPosition.x] = desireHeight;
-
-                    if (!hasBaseHeights) hasBaseHeights = true;
+                    if (s.GetHeight(y + brushPosition.y, x + brushPosition.x) < desireHeight)
+                        s.SetHeight(y + brushPosition.y, x + brushPosition.x, desireHeight);
                 }
             }
         }
@@ -318,6 +316,20 @@ public sealed class TerrainTool : MonoBehaviour
     public void ApplyTerrain()
     {
         var terrainData = GetTerrainData();
+
+        Stroke[] strokes = FindObjectsOfType<Stroke>();
+
+        foreach (Stroke s in strokes)
+        {
+            for (int x = 0; x < GetHeightmapResolution(); x++)
+            {
+                for (int y = 0; y < GetHeightmapResolution(); y++)
+                {
+                    if (s.GetHeight(x, y) > virtualHeights[x, y]) virtualHeights[x, y] = s.GetHeight(x, y);
+                    if (s.GetHeight(x, y) < virtualBaseHeights[x, y]) virtualBaseHeights[x, y] = s.GetHeight(x, y);
+                }
+            }
+        }
 
         TerrainModifier modifier = Object.FindObjectOfType<TerrainModifier>();
         modifier.heights = virtualHeights;

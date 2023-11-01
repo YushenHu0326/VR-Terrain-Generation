@@ -85,7 +85,7 @@ public class VRPlayer : MonoBehaviour
                     offset = position.y - terrainTool.targetTerrain.transform.position.y;
                     brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
 
-                    terrainTool.RaiseTerrain(position,
+                    terrainTool.RaiseTerrain(s, position,
                                              Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
                                              s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
                 }
@@ -94,7 +94,7 @@ public class VRPlayer : MonoBehaviour
                     offset = position.y - hit.point.y;
                     brushSize = Mathf.Abs(offset) * 2f;
 
-                    terrainTool.LowerTerrain(position,
+                    terrainTool.LowerTerrain(s, position,
                                              hit.point.y, brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
                                              s.GetDerivative(i));
                 }
@@ -168,10 +168,7 @@ public class VRPlayer : MonoBehaviour
 
             if (study != null)
             { 
-                study.StartWriting();
-                if (controllerIndex == 0) study.WriteText("Editing left hand");
-                else study.WriteText("Editing right hand");
-                study.WriteVector(position);
+                study.Write(controllerIndex, 1, position);
             }
 
             /****************************************************************/
@@ -221,18 +218,14 @@ public class VRPlayer : MonoBehaviour
 
         if (study != null)
         {
-            study.StartWriting();
             if (editing)
             {
-                if (controllerIndex == 0) study.WriteText("Editing left hand");
-                else study.WriteText("Editing right hand");
+                study.Write(controllerIndex, 1, position);
             }
             else
             {
-                if (controllerIndex == 0) study.WriteText("Authoring left hand");
-                else study.WriteText("Authoring right hand");
+                study.Write(controllerIndex, 0, position);
             }
-            study.WriteVector(position);
         }
 
         /****************************************************************/
@@ -253,15 +246,12 @@ public class VRPlayer : MonoBehaviour
         {
             if (editing)
             {
-                if (controllerIndex == 0) study.WriteText("Editing left hand");
-                else study.WriteText("Editing right hand");
+                study.Write(controllerIndex, 1, position);
             }
             else
             {
-                if (controllerIndex == 0) study.WriteText("Authoring left hand");
-                else study.WriteText("Authoring right hand");
+                study.Write(controllerIndex, 0, position);
             }
-            study.WriteVector(position);
         }
 
         /****************************************************************/
@@ -291,14 +281,14 @@ public class VRPlayer : MonoBehaviour
         {
             if (editing)
             {
-                study.WriteText("Editing both hands");
+                study.Write(0, 1, leftPosition);
+                study.Write(1, 1, rightPosition);
             }
             else
             {
-                study.WriteText("Authoring both hands");
+                study.Write(0, 0, leftPosition);
+                study.Write(1, 0, rightPosition);
             }
-            study.WriteVector(leftPosition);
-            study.WriteVector(rightPosition);
         }
 
         /****************************************************************/
@@ -348,20 +338,6 @@ public class VRPlayer : MonoBehaviour
         }
 
         editing = false;
-
-        /****************************************************************/
-        /*                       User Study use                         */
-        /****************************************************************/
-
-        if (study != null)
-        {
-            study.WriteText("Input complete");
-            study.EndWriting();
-        }
-
-        /****************************************************************/
-        /*                       User Study use                         */
-        /****************************************************************/
     }
 
     public void ClearStrokes()
