@@ -232,7 +232,7 @@ public sealed class TerrainTool : MonoBehaviour
 
                 float desireHeight = Mathf.Lerp(brushHeight, originHeight, distance);
 
-                if (desireHeight > terrainOffset / terrainData.size.y)
+                if (desireHeight < terrainOffset / terrainData.size.y)
                 {
                     if (!hasBaseHeights) hasBaseHeights = true;
 
@@ -345,7 +345,7 @@ public sealed class TerrainTool : MonoBehaviour
         modifier.terrainOffset = terrainOffset / terrainData.size.y;
 
         modifier.ModifyTerrain();
-        //GetTerrainData().SetHeights(0, 0, virtualHeights);
+        //GetTerrainData().SetHeights(0, 0, virtualBaseHeights);
     }
 
     public void SaveTerrain()

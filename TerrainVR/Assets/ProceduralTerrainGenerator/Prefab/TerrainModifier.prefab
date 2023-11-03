@@ -49,6 +49,9 @@ MonoBehaviour:
   xOffset: 0
   yOffset: 0
   range: 0
+  terrainOffset: 0
+  hasGroundHeights: 0
+  hasBaseHeights: 0
   ONNXModel: {fileID: 5022602860645237092, guid: 360fb07c42757ce46a46bc87f4117281,
     type: 3}
 --- !u!114 &9100166992167173667
@@ -63,8 +66,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70335d8a893014b4aac66dad021e302d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _targetTerrain: {fileID: 0}
-  terrainOffset: 20
+  targetTerrain: {fileID: 0}
+  terrainOffset: 40
 --- !u!114 &904725421917684284
 MonoBehaviour:
   m_ObjectHideFlags: 0
