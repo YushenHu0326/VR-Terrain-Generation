@@ -369,8 +369,11 @@ public sealed class TerrainTool : MonoBehaviour
 
     public void ClearTerrain(bool eraseHistory)
     {
-        hasBaseHeights = false;
-        hasGroundHeights = false;
+        if (eraseHistory)
+        {
+            hasBaseHeights = false;
+            hasGroundHeights = false;
+        }
 
         var terrainData = GetTerrainData();
 

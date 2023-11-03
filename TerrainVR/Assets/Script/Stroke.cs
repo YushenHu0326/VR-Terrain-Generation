@@ -169,8 +169,16 @@ public class Stroke : MonoBehaviour
         Vector3 leftMid = (positions[slopeIndex] + leftEnd) / 2f;
         Vector3 rightMid = (positions[slopeIndex] + rightEnd) / 2f;
 
-        leftMid.y = leftEnd.y + Mathf.Pow(0.5f, leftBrushCurve) * (positions[slopeIndex].y - leftEnd.y);
-        rightMid.y = rightEnd.y + Mathf.Pow(0.5f, rightBrushCurve) * (positions[slopeIndex].y - rightEnd.y);
+        if (leftEnd.y < positions[slopeIndex].y)
+        {
+            leftMid.y = leftEnd.y + Mathf.Pow(0.5f, leftBrushCurve) * (positions[slopeIndex].y - leftEnd.y);
+            rightMid.y = rightEnd.y + Mathf.Pow(0.5f, rightBrushCurve) * (positions[slopeIndex].y - rightEnd.y);
+        }
+        else
+        {
+            leftMid.y = positions[slopeIndex].y + Mathf.Pow(0.5f, leftBrushCurve) * (leftEnd.y - positions[slopeIndex].y);
+            rightMid.y = positions[slopeIndex].y + Mathf.Pow(0.5f, rightBrushCurve) * (leftEnd.y - positions[slopeIndex].y);
+        }
 
         slopeVisualCue.GetComponent<LineRenderer>().SetPosition(0, leftEnd);
         slopeVisualCue.GetComponent<LineRenderer>().SetPosition(1, leftMid);
@@ -428,7 +436,7 @@ public class Stroke : MonoBehaviour
             if (position.z > zMax) zMax = position.z;
         }
 
-        return (xMax - xMin) * (yMax - yMin) * (zMax - zMin);
+        return Mathf.Max(xMax - xMin, yMax - yMin, zMax - zMin);
     }
 
     public void HideStroke()

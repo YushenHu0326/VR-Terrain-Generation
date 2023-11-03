@@ -299,7 +299,7 @@ public class VRPlayer : MonoBehaviour
     {
         if (editing)
         {
-            if (stroke.Volume() < 1000f)
+            if (stroke.Volume() < 20f)
             {
                 strokes.Remove(stroke);
                 stroke.DestroyStroke();
@@ -319,7 +319,7 @@ public class VRPlayer : MonoBehaviour
         }
         else
         {
-            if (stroke.Volume() < 1000f)
+            if (stroke.Volume() < 20f)
             {
                 if (controllerIndex == 0)
                 {
