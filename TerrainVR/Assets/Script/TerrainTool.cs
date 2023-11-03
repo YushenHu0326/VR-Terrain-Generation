@@ -344,7 +344,7 @@ public sealed class TerrainTool : MonoBehaviour
         modifier.alphas = alphas;
 
         modifier.ModifyTerrain();
-        //GetTerrainData().SetHeights(0, 0, virtualBaseHeights);
+        //GetTerrainData().SetHeights(0, 0, virtualHeights);
     }
 
     public void SaveTerrain()

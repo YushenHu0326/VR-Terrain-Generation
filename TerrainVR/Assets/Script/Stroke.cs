@@ -257,7 +257,7 @@ public class Stroke : MonoBehaviour
                 {
                     Vector3 d = rightPosition - positions[slopeIndex];
                     d.y = 0f;
-                    leftBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - leftPosition.y);
+                    leftBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - rightPosition.y);
                     leftBrushSize = Mathf.Clamp(leftBrushSize, 0.2f, 2f);
                 }
                 else
@@ -284,7 +284,7 @@ public class Stroke : MonoBehaviour
                 {
                     Vector3 d = rightPosition - positions[slopeIndex];
                     d.y = 0f;
-                    rightBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - leftPosition.y);
+                    rightBrushSize = d.magnitude / Mathf.Abs(positions[slopeIndex].y - rightPosition.y);
                     rightBrushSize = Mathf.Clamp(rightBrushSize, 0.2f, 2f);
                 }
                 else
