@@ -342,6 +342,7 @@ public sealed class TerrainTool : MonoBehaviour
         modifier.hasGroundHeights = hasGroundHeights;
         modifier.hasBaseHeights = hasBaseHeights;
         modifier.alphas = alphas;
+        modifier.terrainOffset = terrainOffset / terrainData.size.y;
 
         modifier.ModifyTerrain();
         //GetTerrainData().SetHeights(0, 0, virtualHeights);

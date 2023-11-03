@@ -102,8 +102,6 @@ public class VRPlayer : MonoBehaviour
             }
             
         }
-
-        terrainTool.ApplyTerrain();
     }
 
     void OnSingleEditingStroke(Vector3 position, int controllerIndex)
@@ -301,14 +299,27 @@ public class VRPlayer : MonoBehaviour
     {
         if (editing)
         {
-            stroke.OnFinishEditing();
-            terrainTool.ClearTerrain(false);
-            foreach (Stroke s in strokes)
-                OnFinishingDrawing(s);
+            if (stroke.Volume() < 1000f)
+            {
+                strokes.Remove(stroke);
+                stroke.DestroyStroke();
+                terrainTool.ClearTerrain(false);
+                foreach (Stroke s in strokes)
+                    OnFinishingDrawing(s);
+            }
+            else
+            {
+                stroke.OnFinishEditing();
+                terrainTool.ClearTerrain(false);
+                foreach (Stroke s in strokes)
+                    OnFinishingDrawing(s);
+            }
+
+            terrainTool.ApplyTerrain();
         }
         else
         {
-            if (stroke.Volume() < 50f)
+            if (stroke.Volume() < 1000f)
             {
                 if (controllerIndex == 0)
                 {
@@ -337,6 +348,7 @@ public class VRPlayer : MonoBehaviour
                 terrainTool.ClearTerrain(false);
                 foreach (Stroke s in strokes)
                     OnFinishingDrawing(s);
+                terrainTool.ApplyTerrain();
                 visualized = true;
             }
         }

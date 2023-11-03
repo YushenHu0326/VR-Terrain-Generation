@@ -45,13 +45,6 @@ public class Stroke : MonoBehaviour
 
         lineRenderer.material.SetColor("_OutlineColor", Color.red);
 
-        xMin = position.x;
-        xMax = position.x;
-        yMin = position.y;
-        yMax = position.y;
-        zMin = position.z;
-        zMax = position.z;
-
         if (filled)
         {
             surface = new GameObject("Surface");
@@ -80,13 +73,6 @@ public class Stroke : MonoBehaviour
             lineRenderer.positionCount = strokeIndex + 1;
             lineRenderer.SetPosition(strokeIndex, position);
             strokeIndex++;
-
-            if (position.x < xMin) xMin = position.x;
-            if (position.x > xMax) xMax = position.x;
-            if (position.y < yMin) yMin = position.y;
-            if (position.y > yMax) yMax = position.y;
-            if (position.z < zMin) zMin = position.z;
-            if (position.z > zMax) zMax = position.z;
 
             if (filled)
             {
@@ -423,6 +409,25 @@ public class Stroke : MonoBehaviour
 
     public float Volume()
     {
+        xMin = GetPosition(0).x;
+        xMax = GetPosition(0).x;
+        yMin = GetPosition(0).y;
+        yMax = GetPosition(0).y;
+        zMin = GetPosition(0).z;
+        zMax = GetPosition(0).z;
+
+        for (int i = 0; i < GetPositionCount(); i++)
+        {
+            Vector3 position = GetPosition(i);
+
+            if (position.x < xMin) xMin = position.x;
+            if (position.x > xMax) xMax = position.x;
+            if (position.y < yMin) yMin = position.y;
+            if (position.y > yMax) yMax = position.y;
+            if (position.z < zMin) zMin = position.z;
+            if (position.z > zMax) zMax = position.z;
+        }
+
         return (xMax - xMin) * (yMax - yMin) * (zMax - zMin);
     }
 
@@ -436,6 +441,7 @@ public class Stroke : MonoBehaviour
     public void DestroyStroke()
     {
         if (surface != null) Destroy(surface);
+        if (slopeVisualCue != null) Destroy(slopeVisualCue);
         Destroy(gameObject);
     }
 

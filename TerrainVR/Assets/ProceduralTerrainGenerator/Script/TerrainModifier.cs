@@ -17,6 +17,7 @@ public class TerrainModifier : MonoBehaviour
     public float[,] baseHeights;
     public float[,] alphas;
     public int xOffset, yOffset, range;
+    public float terrainOffset;
 
     public bool hasGroundHeights;
     public bool hasBaseHeights;
@@ -41,11 +42,13 @@ public class TerrainModifier : MonoBehaviour
         terrain = Object.FindObjectOfType<Terrain>();
         terrainData = terrain.terrainData;
 
+        maxHeight = terrainOffset;
+        minHeight = terrainOffset;
+        maxBaseHeight = terrainOffset;
+        minBaseHeight = terrainOffset;
+
         if (hasGroundHeights)
         {
-            maxHeight = 0f;
-            minHeight = 1.01f;
-
             for (int y = 0; y < terrainData.heightmapResolution; y++)
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
@@ -60,9 +63,6 @@ public class TerrainModifier : MonoBehaviour
 
         if (hasBaseHeights)
         {
-            maxBaseHeight = 0f;
-            minBaseHeight = 1.01f;
-
             for (int y = 0; y < terrainData.heightmapResolution; y++)
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
@@ -146,7 +146,7 @@ public class TerrainModifier : MonoBehaviour
 
                 float n = Mathf.PerlinNoise((float)w / 30f, (float)h / 30f);
 
-                n *= 1f - terrainData.GetInterpolatedNormal((float)w / 256f, (float)h / 256).y;
+                n *= 1f - terrainData.GetInterpolatedNormal((float)w / 256f, (float)h / 256f).y;
 
                 r *= ((1f - r) * n * 0.5f + 1f);
 
@@ -225,6 +225,9 @@ public class TerrainModifier : MonoBehaviour
         float[,] originHeights = terrainData.GetHeights(0, 0, terrainData.heightmapResolution, terrainData.heightmapResolution);
         float[,] newHeights = new float[terrainData.heightmapResolution, terrainData.heightmapResolution];
 
+        float d = maxHeight - minHeight;
+        float baseD = maxBaseHeight - minBaseHeight;
+
         if (hasBaseHeights && !hasGroundHeights)
         {
             maxBaseColor = 0f;
@@ -241,7 +244,7 @@ public class TerrainModifier : MonoBehaviour
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
                 {
-                    newHeights[y, x] = baseTex.GetPixel(x, y).r / maxBaseColor * (maxBaseHeight - minBaseHeight) + minBaseHeight;
+                    newHeights[y, x] = baseTex.GetPixel(x, y).r / maxBaseColor * baseD + minBaseHeight;
                 }
             }
         }
@@ -261,7 +264,7 @@ public class TerrainModifier : MonoBehaviour
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
                 {
-                    newHeights[y, x] = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
+                    newHeights[y, x] = tex.GetPixel(x, y).r / maxColor * d + minHeight;
                 }
             }
         }
@@ -290,8 +293,8 @@ public class TerrainModifier : MonoBehaviour
             {
                 for (int x = 0; x < terrainData.heightmapResolution; x++)
                 {
-                    float baseHeight = baseTex.GetPixel(x, y).r / maxBaseColor * (maxBaseHeight - minBaseHeight) + minBaseHeight;
-                    float groundHeight = tex.GetPixel(x, y).r / maxColor * (maxHeight - minHeight) + minHeight;
+                    float baseHeight = baseTex.GetPixel(x, y).r / maxBaseColor * baseD + minBaseHeight;
+                    float groundHeight = tex.GetPixel(x, y).r / maxColor * d + minHeight;
 
                     float lerp = tex.GetPixel(x, y).r * 2f;
 

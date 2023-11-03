@@ -114,8 +114,8 @@ public class ProceduralTerrainPainter : MonoBehaviour
 
         terrainData.SetAlphamaps(0, 0, alphas);
 
-        //byte[] bytes = tex.EncodeToPNG();
+       // byte[] bytes = tex.EncodeToPNG();
 
-        //System.IO.File.WriteAllBytes(Application.dataPath + "/n.png", bytes);
+       // System.IO.File.WriteAllBytes(Application.dataPath + "/n.png", bytes);
     }
 }
