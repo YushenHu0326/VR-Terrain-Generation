@@ -69,17 +69,17 @@ public class ProceduralTerrainPainter : MonoBehaviour
 
                 if (normal > 0.8f)
                 {
-                    if (height < 55f)
+                    if (height < 75f)
                     {
                         alphas[y, x, 0] = 1f;
                         alphas[y, x, 1] = 0f;
                         alphas[y, x, 2] = 0f;
                     }    
-                    else if (height < 60f)
+                    else if (height < 80f)
                     {
-                        alphas[y, x, 0] = (60f - height) / 5f;
+                        alphas[y, x, 0] = (80f - height) / 5f;
                         alphas[y, x, 1] = 0f;
-                        alphas[y, x, 2] = (height - 55f) / 5f;
+                        alphas[y, x, 2] = (height - 75f) / 5f;
                     }
                     else
                     {
