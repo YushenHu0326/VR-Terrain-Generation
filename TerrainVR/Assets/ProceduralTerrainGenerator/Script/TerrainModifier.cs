@@ -126,11 +126,17 @@ public class TerrainModifier : MonoBehaviour
         return tex;
     }
 
-    float[] ProcessHeightmap(Texture2D tex)
+    float[] ProcessHeightmap(Texture2D tex, Texture2D aTex, bool based)
     {
         tex.Apply();
         RenderTexture rt = RenderTexture.GetTemporary(256, 256, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.Default);
         RenderTexture.active = rt;
+
+        Graphics.Blit(aTex, rt);
+        aTex.Reinitialize(256, 256, aTex.format, true);
+        aTex.filterMode = FilterMode.Bilinear;
+        aTex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
+        aTex.Apply();
 
         Graphics.Blit(tex, rt);
         tex.Reinitialize(256, 256, tex.format, true);
@@ -138,27 +144,35 @@ public class TerrainModifier : MonoBehaviour
         tex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
         tex.Apply();
 
+        float level = (maxHeight - minHeight) / 0.012f;
+        if (based) 
+            level = (maxBaseHeight - minBaseHeight) / 0.012f;
+
         for (int h = 0; h < 256; h++)
         {
             for (int w = 0; w < 256; w++)
             {
                 float r = tex.GetPixel(w, h).r;
 
-                float n = Mathf.PerlinNoise((float)w / 30f, (float)h / 30f);
+                float n = Mathf.PerlinNoise((float)w / 15f, (float)h / 15f);
 
-                n *= 1f - terrainData.GetInterpolatedNormal((float)w / 256f, (float)h / 256f).y;
+                float a = aTex.GetPixel(w, h).r;
+                if (!based) a = 1f - a;
+                a *= 1f - 2f * Mathf.Abs(0.5f - r);
 
-                r *= ((1f - r) * n * 0.5f + 1f);
+                //n *= 1f - terrainData.GetInterpolatedNormal((float)w / 256f, (float)h / 256f).y;
 
-                r *= 10f;
+                r *= (n * a + 1f);
+
+                r *= level;
                 r = Mathf.Floor(r);
-                r /= 12f;
+                r /= level * 1.5f;
 
                 tex.SetPixel(w, h, new Color(r, r, r));
             }
         }
 
-        byte[] bytes = tex.EncodeToPNG();
+        //byte[] bytes = tex.EncodeToPNG();
 
         //System.IO.File.WriteAllBytes(Application.dataPath + "/h.png", bytes);
 
@@ -314,10 +328,19 @@ public class TerrainModifier : MonoBehaviour
         Texture2D modifiedTex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
         Texture2D modifiedBaseTex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
 
+        Texture2D alphaTex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
+            {
+                alphaTex.SetPixel(x, y, new Color(alphas[y, x], alphas[y, x], alphas[y, x], 1f));
+            }
+        }
+
         if (hasGroundHeights)
         {
             Texture2D tex = RetrieveTerrainHeightmap();
-            float[] values = ProcessHeightmap(tex);
+            float[] values = ProcessHeightmap(tex, alphaTex, false);
 
             Tensor input = new Tensor(1, 256, 256, 3, values);
             Tensor output = worker.Execute(input).PeekOutput();
@@ -342,7 +365,7 @@ public class TerrainModifier : MonoBehaviour
         if (hasBaseHeights)
         {
             Texture2D tex = RetrieveBaseTerrainHeightmap();
-            float[] values = ProcessHeightmap(tex);
+            float[] values = ProcessHeightmap(tex, alphaTex, true);
 
             Tensor input = new Tensor(1, 256, 256, 3, values);
             Tensor output = worker.Execute(input).PeekOutput();

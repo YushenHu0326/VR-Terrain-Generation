@@ -127,6 +127,8 @@ public sealed class TerrainTool : MonoBehaviour
         float angle = 0f;
         float angleTemp;
 
+        float alpha = 0f;
+
         for (var y = 0; y < brushSize.y; y++)
         {
             for (var x = 0; x < brushSize.x; x++)
@@ -171,6 +173,9 @@ public sealed class TerrainTool : MonoBehaviour
 
                 if (virtualHeights[y + brushPosition.y, x + brushPosition.x] < distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y)
                     virtualHeights[y + brushPosition.y, x + brushPosition.x] = distance * (height - terrainOffset) / terrainData.size.y + terrainOffset / terrainData.size.y;
+
+                if (alphas[y + brushPosition.y, x + brushPosition.x] < Mathf.Pow(distance, 4f))
+                    alphas[y + brushPosition.y, x + brushPosition.x] = Mathf.Pow(distance, 4f);
             }
         }
     }
@@ -244,6 +249,9 @@ public sealed class TerrainTool : MonoBehaviour
                     if (virtualHeights[y + brushPosition.y, x + brushPosition.x] < desireHeight)
                         virtualHeights[y + brushPosition.y, x + brushPosition.x] = desireHeight;
                 }
+
+                if (alphas[y + brushPosition.y, x + brushPosition.x] < Mathf.Pow((1f - distance), 4f))
+                    alphas[y + brushPosition.y, x + brushPosition.x] = Mathf.Pow((1f - distance), 4f);
             }
         }
     }
@@ -288,6 +296,8 @@ public sealed class TerrainTool : MonoBehaviour
                             virtualHeights[yy - 8 + y, xx - 8 + x] = height;
                         else
                             virtualBaseHeights[yy - 8 + y, xx - 8 + x] = height;
+
+                        alphas[yy - 8 + y, xx - 8 + x] = 1f;
                     }
                 }
             }
@@ -312,6 +322,8 @@ public sealed class TerrainTool : MonoBehaviour
                             virtualHeights[yy - 8 + y, xx - 8 + x] = height;
                         else
                             virtualBaseHeights[yy - 8 + y, xx - 8 + x] = height;
+
+                        alphas[yy - 8 + y, xx - 8 + x] = 1f;
                     }
                 }
             }
