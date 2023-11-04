@@ -35,6 +35,8 @@ public class VRPlayer : MonoBehaviour
     private bool editing;
     private bool visualized;
 
+    public bool freezeInput;
+
     private UserStudy study;
 
     void OnStartDrawing(Vector3 position)
@@ -49,58 +51,62 @@ public class VRPlayer : MonoBehaviour
             stroke.DrawStroke(position);
     }
 
-    void OnFinishingDrawing(Stroke s)
+    IEnumerator OnFinishingDrawing()
     {
-        if (s == null) return;
-        if (!s.activated) return;
-
-        Vector3 position;
-        float offset, brushSize;
-
-        if (s.filled)
+        foreach (Stroke s in strokes)
         {
+            if (s == null) continue;
+            if (!s.activated) continue;
+
+            Vector3 position;
+            float offset, brushSize;
+
+            if (s.filled)
+            {
+                for (int i = 0; i < s.GetPositionCount(); i++)
+                {
+                    position = s.GetPosition(i);
+
+                    if (i != 0)
+                    {
+                        terrainTool.FillTerrain(position, s.GetPosition(0), 20, 20);
+                    }
+                }
+            }
+
             for (int i = 0; i < s.GetPositionCount(); i++)
             {
                 position = s.GetPosition(i);
 
-                if (i != 0)
+                int startIndex = Mathf.Max(0, i - 20);
+                int endIndex = Mathf.Min(s.GetPositionCount() - 1, i + 20);
+
+                RaycastHit hit;
+
+                if (Physics.Raycast(new Vector3(position.x, 500f, position.z), Vector3.down * 500f, out hit))
                 {
-                    terrainTool.FillTerrain(position, s.GetPosition(0), 20, 20);
+                    if (hit.point.y < position.y)
+                    {
+                        offset = position.y - terrainTool.targetTerrain.transform.position.y;
+                        brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
+
+                        terrainTool.RaiseTerrain(position,
+                                                 Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
+                                                 s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
+                    }
+                    else
+                    {
+                        offset = position.y - hit.point.y;
+                        brushSize = Mathf.Abs(offset) * 2f;
+
+                        terrainTool.LowerTerrain(position,
+                                                 hit.point.y, brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
+                                                 s.GetDerivative(i));
+                    }
                 }
+
+                yield return null;
             }
-        }
-
-        for (int i = 0; i < s.GetPositionCount(); i++)
-        {
-            position = s.GetPosition(i);
-
-            int startIndex = Mathf.Max(0, i - 20);
-            int endIndex = Mathf.Min(s.GetPositionCount() - 1, i + 20);
-
-            RaycastHit hit;
-
-            if (Physics.Raycast(new Vector3(position.x, 500f, position.z), Vector3.down * 500f, out hit))
-            {
-                if (hit.point.y < position.y)
-                {
-                    offset = position.y - terrainTool.targetTerrain.transform.position.y;
-                    brushSize = Mathf.Abs(offset - terrainTool.terrainOffset) * 2f;
-
-                    terrainTool.RaiseTerrain(position,
-                                             Mathf.Abs(offset), brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
-                                             s.GetDerivative(i), s.GetPosition(startIndex), s.GetPosition(endIndex), s.GetPosition(0), s.GetPosition(s.GetPositionCount() - 1));
-                }
-                else
-                {
-                    offset = position.y - hit.point.y;
-                    brushSize = Mathf.Abs(offset) * 2f;
-
-                    terrainTool.LowerTerrain(position,
-                                             hit.point.y, brushSize, s.GetLeftBrushSize(), s.GetRightBrushSize(), s.GetLeftBrushCurve(), s.GetRightBrushCurve(),
-                                             s.GetDerivative(i));
-                }
-            }
-            
         }
     }
 
@@ -296,27 +302,27 @@ public class VRPlayer : MonoBehaviour
         /****************************************************************/
     }
 
-    public void OnFinishingInput(int controllerIndex)
+    public IEnumerator OnFinishingInput(int controllerIndex)
     {
         if (editing)
         {
+            freezeInput = true;
+
             if (stroke.Volume() < 20f)
             {
                 strokes.Remove(stroke);
                 stroke.DestroyStroke();
                 terrainTool.ClearTerrain(false);
-                foreach (Stroke s in strokes)
-                    OnFinishingDrawing(s);
+                yield return StartCoroutine(OnFinishingDrawing());
             }
             else
             {
                 stroke.OnFinishEditing();
                 terrainTool.ClearTerrain(false);
-                foreach (Stroke s in strokes)
-                    OnFinishingDrawing(s);
+                yield return StartCoroutine(OnFinishingDrawing());
             }
 
-            terrainTool.ApplyTerrain();
+            yield return StartCoroutine(terrainTool.ApplyTerrain());
         }
         else
         {
@@ -343,13 +349,14 @@ public class VRPlayer : MonoBehaviour
             }
             else
             {
+                freezeInput = true;
+
                 stroke.FinishStroke();
                 strokes.Add(stroke);
 
                 terrainTool.ClearTerrain(false);
-                foreach (Stroke s in strokes)
-                    OnFinishingDrawing(s);
-                terrainTool.ApplyTerrain();
+                yield return StartCoroutine(OnFinishingDrawing());
+                yield return StartCoroutine(terrainTool.ApplyTerrain());
                 visualized = true;
             }
         }
@@ -398,6 +405,7 @@ public class VRPlayer : MonoBehaviour
     void Update()
     {
         if (gestureDetector == null) return;
+        if (freezeInput) return;
 
         if (gestureDetector.leftHandPinching)
         {
@@ -424,7 +432,7 @@ public class VRPlayer : MonoBehaviour
                 leftHandPinchBegin = false;
 
                 if (!rightHandPinchBegin)
-                    OnFinishingInput(0);
+                    StartCoroutine(OnFinishingInput(0));
             }
         }
 
@@ -447,7 +455,7 @@ public class VRPlayer : MonoBehaviour
                 rightHandPinchBegin = false;
 
                 if (!leftHandPinchBegin)
-                    OnFinishingInput(1);
+                    StartCoroutine(OnFinishingInput(1));
             }
         }
     }

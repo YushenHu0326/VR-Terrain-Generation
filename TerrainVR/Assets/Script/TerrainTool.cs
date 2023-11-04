@@ -1,5 +1,7 @@
 using System.Linq;
-
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class TerrainTool : MonoBehaviour
@@ -331,7 +333,7 @@ public sealed class TerrainTool : MonoBehaviour
     }
 
 
-    public void ApplyTerrain()
+    public IEnumerator ApplyTerrain()
     {
         var terrainData = GetTerrainData();
 
@@ -346,9 +348,13 @@ public sealed class TerrainTool : MonoBehaviour
                 if (savedBaseHeights[y, x] < virtualBaseHeights[y, x]) 
                     virtualBaseHeights[y, x] = savedBaseHeights[y, x];
             }
+
+            if (y % 10 == 0) yield return null;
         }
 
-        TerrainModifier modifier = Object.FindObjectOfType<TerrainModifier>();
+        //GetTerrainData().SetHeights(0, 0, virtualHeights);
+
+        TerrainModifier modifier = FindObjectOfType<TerrainModifier>();
         modifier.heights = virtualHeights;
         modifier.baseHeights = virtualBaseHeights;
         modifier.hasGroundHeights = hasGroundHeights;
@@ -356,8 +362,7 @@ public sealed class TerrainTool : MonoBehaviour
         modifier.alphas = alphas;
         modifier.terrainOffset = terrainOffset / terrainData.size.y;
 
-        modifier.ModifyTerrain();
-        //GetTerrainData().SetHeights(0, 0, virtualBaseHeights);
+        yield return StartCoroutine(modifier.ModifyTerrain());
     }
 
     public void SaveTerrain()
@@ -408,7 +413,7 @@ public sealed class TerrainTool : MonoBehaviour
 
         terrainData.SetHeights(0, 0, virtualHeights);
 
-        TerrainModifier modifier = Object.FindObjectOfType<TerrainModifier>();
+        TerrainModifier modifier = FindObjectOfType<TerrainModifier>();
         modifier.PaintTerrain();
     }
 }
