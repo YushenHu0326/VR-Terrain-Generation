@@ -253,7 +253,7 @@ public class TerrainModifier : MonoBehaviour
                     if (baseTex.GetPixel(x, y).r > maxBaseColor) maxBaseColor = baseTex.GetPixel(x, y).r;
                 }
 
-                if (y % 50 == 0) yield return null;
+                if (y % 100 == 0) yield return null;
             }
 
             for (int y = 0; y < terrainData.heightmapResolution; y++)
@@ -281,7 +281,7 @@ public class TerrainModifier : MonoBehaviour
                     if (tex.GetPixel(x, y).r > maxColor) maxColor = tex.GetPixel(x, y).r;
                 }
 
-                if (y % 50 == 0) yield return null;
+                if (y % 100 == 0) yield return null;
             }
 
             for (int y = 0; y < terrainData.heightmapResolution; y++)
@@ -310,7 +310,7 @@ public class TerrainModifier : MonoBehaviour
                     if (tex.GetPixel(x, y).r > maxColor) maxColor = tex.GetPixel(x, y).r;
                 }
 
-                if (y % 50 == 0) yield return null;
+                if (y % 100 == 0) yield return null;
             }
 
             for (int y = 0; y < terrainData.heightmapResolution; y++)
@@ -320,7 +320,7 @@ public class TerrainModifier : MonoBehaviour
                     if (baseTex.GetPixel(x, y).r > maxBaseColor) maxBaseColor = baseTex.GetPixel(x, y).r;
                 }
 
-                if (y % 50 == 0) yield return null;
+                if (y % 100 == 0) yield return null;
             }
 
             for (int y = 0; y < terrainData.heightmapResolution; y++)

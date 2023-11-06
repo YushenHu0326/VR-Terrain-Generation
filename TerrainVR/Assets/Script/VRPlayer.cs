@@ -10,6 +10,9 @@ public class VRPlayer : MonoBehaviour
     private List<Stroke> strokes;
     private GameObject surface;
 
+    public GameObject water;
+    private bool draggingWater;
+
     private Vector3 lastStrokePosition;
     private bool filled;
     private float erosionStrength;
@@ -71,6 +74,8 @@ public class VRPlayer : MonoBehaviour
                     {
                         terrainTool.FillTerrain(position, s.GetPosition(0), 20, 20);
                     }
+
+                    if (i % 10 == 0) yield return null;
                 }
             }
 
@@ -105,7 +110,7 @@ public class VRPlayer : MonoBehaviour
                     }
                 }
 
-                yield return null;
+                if (i % 10 == 0) yield return null;
             }
         }
     }
@@ -129,6 +134,13 @@ public class VRPlayer : MonoBehaviour
 
     public void OnFirstInput(Vector3 position, int controllerIndex)
     {
+        if (water != null && Mathf.Abs(position.y - (water.transform.position.y + 50f)) < 5f)
+        {
+            draggingWater = true;
+            water.transform.position = new Vector3(water.transform.position.x, position.y - 50f, water.transform.position.z);
+            return;
+        }
+
         if (editing)
         {
             if (controllerIndex == 0)
@@ -241,6 +253,12 @@ public class VRPlayer : MonoBehaviour
 
     public void OnSingleInput(Vector3 position, int controllerIndex)
     {
+        if (draggingWater)
+        {
+            water.transform.position = new Vector3(water.transform.position.x, position.y - 50f, water.transform.position.z);
+            return;
+        }
+
         if (editing) OnSingleEditingStroke(position, controllerIndex);
         else OnDrawing(position);
 
@@ -267,6 +285,12 @@ public class VRPlayer : MonoBehaviour
 
     public void OnBothInput(Vector3 leftPosition, Vector3 rightPosition)
     {
+        if (draggingWater)
+        {
+            water.transform.position = new Vector3(water.transform.position.x, rightPosition.y - 50f, water.transform.position.z);
+            return;
+        }
+
         if (editing)
         {
             OnBothEditingStroke(leftPosition, rightPosition);
@@ -304,6 +328,12 @@ public class VRPlayer : MonoBehaviour
 
     public IEnumerator OnFinishingInput(int controllerIndex)
     {
+        if (draggingWater)
+        {
+            draggingWater = false;
+            yield break;
+        }
+
         if (editing)
         {
             freezeInput = true;
