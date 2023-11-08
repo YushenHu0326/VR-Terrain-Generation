@@ -75,7 +75,7 @@ public class GestureDetector : MonoBehaviour
             if (Physics.Raycast(rightHandPos, Vector3.down * 500f, out rightHit))
             {
                 rightLine.SetPosition(1, rightHit.point);
-                rightLine.material.SetColor("_OutlineColor", Color.red);
+                rightLine.material.SetColor("_OutlineColor", Color.yellow);
             }
             else if (Physics.Raycast(new Vector3(rightHandPos.x, 500f, rightHandPos.z), Vector3.down * 500f, out rightHit))
             {
@@ -90,7 +90,7 @@ public class GestureDetector : MonoBehaviour
             if (Physics.Raycast(leftHandPos, Vector3.down * 500f, out leftHit))
             {
                 leftLine.SetPosition(1, leftHit.point);
-                leftLine.material.SetColor("_OutlineColor", Color.red);
+                leftLine.material.SetColor("_OutlineColor", Color.yellow);
             }
             else if (Physics.Raycast(new Vector3(leftHandPos.x, 500f, leftHandPos.z), Vector3.down * 500f, out leftHit))
             {

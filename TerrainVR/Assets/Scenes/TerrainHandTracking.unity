@@ -492,7 +492,7 @@ Transform:
   m_GameObject: {fileID: 555415450}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -250, y: -100, z: -250}
+  m_LocalPosition: {x: -150, y: -100, z: -150}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -681,6 +681,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ImageDisplayer
       objectReference: {fileID: 0}
+    - target: {fileID: 3782759354816754420, guid: 54d6186a480a24946979e3d91ab39f58,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7547275482632581061, guid: 54d6186a480a24946979e3d91ab39f58,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -689,7 +694,7 @@ PrefabInstance:
     - target: {fileID: 7547275482632581061, guid: 54d6186a480a24946979e3d91ab39f58,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7547275482632581061, guid: 54d6186a480a24946979e3d91ab39f58,
         type: 3}
@@ -731,6 +736,31 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
+    - target: {fileID: 8417271668420954114, guid: 54d6186a480a24946979e3d91ab39f58,
+        type: 3}
+      propertyPath: textures.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8417271668420954114, guid: 54d6186a480a24946979e3d91ab39f58,
+        type: 3}
+      propertyPath: textures.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8417271668420954114, guid: 54d6186a480a24946979e3d91ab39f58,
+        type: 3}
+      propertyPath: textures.Array.data[1]
+      value: 
+      objectReference: {fileID: 2800000, guid: ed256049eab4f284faa66ef5daedd0bf, type: 3}
+    - target: {fileID: 8417271668420954114, guid: 54d6186a480a24946979e3d91ab39f58,
+        type: 3}
+      propertyPath: textures.Array.data[2]
+      value: 
+      objectReference: {fileID: 2800000, guid: be555571df1615c45802f42746e741a7, type: 3}
+    - target: {fileID: 8417271668420954114, guid: 54d6186a480a24946979e3d91ab39f58,
+        type: 3}
+      propertyPath: textures.Array.data[3]
+      value: 
+      objectReference: {fileID: 2800000, guid: ba9a9e47cb79e0a44904794c54e060a9, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1137,6 +1167,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: UserStudy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2200183380717180392, guid: 98c1f65c4468bca4888c8d017f885a6a,
+        type: 3}
+      propertyPath: userIndex
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

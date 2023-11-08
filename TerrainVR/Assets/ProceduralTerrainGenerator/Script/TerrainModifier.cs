@@ -170,7 +170,7 @@ public class TerrainModifier : MonoBehaviour
 
                 r *= level;
                 r = Mathf.Floor(r);
-                r /= level * 1.2f;
+                r /= level * 1.5f;
 
                 tex.SetPixel(w, h, new Color(r, r, r));
             }

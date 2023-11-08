@@ -327,9 +327,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b87f944a71a8b9a45b07d5dac9dab6a4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  icon: {fileID: 2187453816698362759, guid: 6f29e147ec395a44d94a67afb8a4e8a0, type: 3}
   leftBrushSize: 1
   rightBrushSize: 1
   strokeMat: {fileID: 2100000, guid: 311313efa011949e98b6761d652ad13c, type: 2}
+  freezeInput: 0
 --- !u!1 &100006
 GameObject:
   m_ObjectHideFlags: 0

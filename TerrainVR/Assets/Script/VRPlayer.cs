@@ -10,8 +10,8 @@ public class VRPlayer : MonoBehaviour
     private List<Stroke> strokes;
     private GameObject surface;
 
-    public GameObject water;
-    private bool draggingWater;
+    public GameObject icon;
+    private GameObject iconObj;
 
     private Vector3 lastStrokePosition;
     private bool filled;
@@ -134,13 +134,6 @@ public class VRPlayer : MonoBehaviour
 
     public void OnFirstInput(Vector3 position, int controllerIndex)
     {
-        if (water != null && Mathf.Abs(position.y - (water.transform.position.y + 50f)) < 5f)
-        {
-            draggingWater = true;
-            water.transform.position = new Vector3(water.transform.position.x, position.y - 50f, water.transform.position.z);
-            return;
-        }
-
         if (editing)
         {
             if (controllerIndex == 0)
@@ -253,12 +246,6 @@ public class VRPlayer : MonoBehaviour
 
     public void OnSingleInput(Vector3 position, int controllerIndex)
     {
-        if (draggingWater)
-        {
-            water.transform.position = new Vector3(water.transform.position.x, position.y - 50f, water.transform.position.z);
-            return;
-        }
-
         if (editing) OnSingleEditingStroke(position, controllerIndex);
         else OnDrawing(position);
 
@@ -285,12 +272,6 @@ public class VRPlayer : MonoBehaviour
 
     public void OnBothInput(Vector3 leftPosition, Vector3 rightPosition)
     {
-        if (draggingWater)
-        {
-            water.transform.position = new Vector3(water.transform.position.x, rightPosition.y - 50f, water.transform.position.z);
-            return;
-        }
-
         if (editing)
         {
             OnBothEditingStroke(leftPosition, rightPosition);
@@ -328,12 +309,6 @@ public class VRPlayer : MonoBehaviour
 
     public IEnumerator OnFinishingInput(int controllerIndex)
     {
-        if (draggingWater)
-        {
-            draggingWater = false;
-            yield break;
-        }
-
         if (editing)
         {
             freezeInput = true;
@@ -373,6 +348,20 @@ public class VRPlayer : MonoBehaviour
                 else
                 {
                     filled = !filled;
+                    if (filled)
+                    {
+                        if (icon != null)
+                        {
+                            iconObj = Instantiate(icon);
+                        }
+                    }
+                    else
+                    {
+                        if (iconObj != null)
+                        {
+                            Destroy(iconObj);
+                        }
+                    }
                 }
 
                 stroke.DestroyStroke();
@@ -436,6 +425,16 @@ public class VRPlayer : MonoBehaviour
     {
         if (gestureDetector == null) return;
         if (freezeInput) return;
+
+        if (iconObj != null)
+        {
+            iconObj.transform.position = gestureDetector.rightHandPos;
+        }
+
+        if (Input.GetKeyDown("enter"))
+        {
+            ClearInput();
+        }
 
         if (gestureDetector.leftHandPinching)
         {
