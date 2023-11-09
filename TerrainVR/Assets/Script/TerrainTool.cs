@@ -154,19 +154,19 @@ public sealed class TerrainTool : MonoBehaviour
 
                 if (leftBrushSize < rightBrushSize)
                 {
-                    adjustedSize = Mathf.Lerp(leftBrushSize * (float)brushSize.x, (float)brushSize.x, angle);
+                    adjustedSize = Mathf.Lerp(leftBrushSize / rightBrushSize, 1f, angle);
                 }
                 else
                 {
-                    adjustedSize = Mathf.Lerp((float)brushSize.x, rightBrushSize * (float)brushSize.x, angle);
+                    adjustedSize = Mathf.Lerp(1f, rightBrushSize / leftBrushSize, angle);
                 }
 
-                if (Mathf.Min(startSize, endSize, frontSize, backSize) < Mathf.Max(leftBrushSize, rightBrushSize))
+                if (Mathf.Min(startSize, endSize, frontSize, backSize) < adjustedSize)
                 {
-                    adjustedSize *= Mathf.Min(startSize, endSize, frontSize, backSize);
+                    adjustedSize = Mathf.Min(startSize, endSize, frontSize, backSize);
                 }
 
-                distance /= adjustedSize / 2f;
+                distance /= adjustedSize * brushSize.x / 2f;
                 distance = Mathf.Clamp(distance, 0f, 1f);
                 distance = 1f - distance;
 
@@ -224,14 +224,14 @@ public sealed class TerrainTool : MonoBehaviour
 
                 if (leftBrushSize < rightBrushSize)
                 {
-                    adjustedSize = Mathf.Lerp(leftBrushSize * (float)brushSize.x, (float)brushSize.x, angle);
+                    adjustedSize = Mathf.Lerp(leftBrushSize / rightBrushSize, 1f, angle);
                 }
                 else
                 {
-                    adjustedSize = Mathf.Lerp((float)brushSize.x, rightBrushSize * (float)brushSize.x, angle);
+                    adjustedSize = Mathf.Lerp(1f, rightBrushSize / leftBrushSize, angle);
                 }
 
-                distance /= adjustedSize / 2f;
+                distance /= adjustedSize * brushSize.x / 2f;
                 distance = Mathf.Clamp(distance, 0f, 1f);
 
                 if (angleTemp < 0f) distance = Mathf.Pow(distance, Mathf.Lerp(rightBrushCurve, 1f, Mathf.Abs(angleTemp + 0.5f) * 2f));
