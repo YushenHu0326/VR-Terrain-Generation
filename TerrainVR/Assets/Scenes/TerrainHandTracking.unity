@@ -745,7 +745,7 @@ PrefabInstance:
         type: 3}
       propertyPath: textures.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2800000, guid: ce1dcb8aaf711b04cb01d8608c89a80e, type: 3}
     - target: {fileID: 8417271668420954114, guid: 54d6186a480a24946979e3d91ab39f58,
         type: 3}
       propertyPath: textures.Array.data[1]

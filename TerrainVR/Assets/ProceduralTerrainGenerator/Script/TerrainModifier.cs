@@ -93,7 +93,8 @@ public class TerrainModifier : MonoBehaviour
             for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 tex.SetPixel(x, y, new Color((heights[y + yOffset, x + xOffset] - minHeight) / (maxHeight - minHeight),
-                                             0f, 0f, 1));
+                                             (heights[y + yOffset, x + xOffset] - minHeight) / (maxHeight - minHeight),
+                                             (heights[y + yOffset, x + xOffset] - minHeight) / (maxHeight - minHeight), 1));
             }
         }
 
@@ -125,7 +126,8 @@ public class TerrainModifier : MonoBehaviour
             for (int x = 0; x < terrainData.heightmapResolution; x++)
             {
                 tex.SetPixel(x, y, new Color(alphas[y + yOffset, x + xOffset],
-                                             0f, 0f, 1));
+                                             alphas[y + yOffset, x + xOffset],
+                                             alphas[y + yOffset, x + xOffset], 1));
             }
         }
 
@@ -150,6 +152,8 @@ public class TerrainModifier : MonoBehaviour
         tex.ReadPixels(new Rect(0.0f, 0.0f, 256, 256), 0, 0);
         tex.Apply();
 
+        Texture2D tex1 = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+
         float level = (maxHeight - minHeight) / 0.012f;
         if (based) 
             level = (maxBaseHeight - minBaseHeight) / 0.012f;
@@ -160,21 +164,29 @@ public class TerrainModifier : MonoBehaviour
             {
                 float r = tex.GetPixel(w, h).r;
 
-                float n = Mathf.PerlinNoise((float)w / 15f, (float)h / 15f);
+                float n = Mathf.PerlinNoise((float)w / 12f, (float)h / 12f);
 
-                float a = aTex.GetPixel(w, h).r;
-                if (!based) a = 1f - a;
-                a *= 1f - 2f * Mathf.Abs(0.5f - r);
+                float r1 = r;
 
-                r *= (n * a + 1f);
+                r *= (n * 0.3f * (1f - r) + 1f);
 
                 r *= level;
                 r = Mathf.Floor(r);
                 r /= level * 1.5f;
 
+                r1 *= level;
+                r1 = Mathf.Floor(r1);
+                r1 /= level * 1.5f;
+
                 tex.SetPixel(w, h, new Color(r, r, r));
+                tex1.SetPixel(w, h, new Color(r1, r1, r1));
             }
         }
+
+        byte[] bytes = tex.EncodeToPNG();
+        System.IO.File.WriteAllBytes(Application.dataPath + "/h0.png", bytes);
+        byte[] bytes1 = tex1.EncodeToPNG();
+        System.IO.File.WriteAllBytes(Application.dataPath + "/h1.png", bytes1);
 
         float[] values = new float[196608];
 
@@ -217,6 +229,8 @@ public class TerrainModifier : MonoBehaviour
             name += ".png";
             System.IO.File.WriteAllBytes(Application.dataPath + name, bytes); 
         }
+
+        System.IO.File.WriteAllBytes(Application.dataPath + "/h2.png", bytes);
 
         return tex;
     }
