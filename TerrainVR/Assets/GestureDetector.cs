@@ -37,10 +37,11 @@ public class GestureDetector : MonoBehaviour
 
     IEnumerator AddOutline()
     {
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1.5f);
 
         rightHand.gameObject.AddComponent<Outline>();
         leftHand.gameObject.AddComponent<Outline>();
+
     }
 
     // Update is called once per frame

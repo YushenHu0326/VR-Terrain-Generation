@@ -352,8 +352,6 @@ public sealed class TerrainTool : MonoBehaviour
             if (y % 10 == 0) yield return null;
         }
 
-        //GetTerrainData().SetHeights(0, 0, virtualHeights);
-
         TerrainModifier modifier = FindObjectOfType<TerrainModifier>();
         modifier.heights = virtualHeights;
         modifier.baseHeights = virtualBaseHeights;

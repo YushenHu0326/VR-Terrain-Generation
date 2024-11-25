@@ -358,6 +358,19 @@ public class TerrainModifier : MonoBehaviour
         }
 
         terrainData.SetHeights(xOffset, yOffset, newHeights);
+
+        Texture2D atex = new Texture2D(terrainData.heightmapResolution, terrainData.heightmapResolution, TextureFormat.ARGB32, false);
+        for (int y = 0; y < terrainData.heightmapResolution; y++)
+        {
+            for (int x = 0; x < terrainData.heightmapResolution; x++)
+            {
+                atex.SetPixel(x, y, new Color(newHeights[y, x], newHeights[y, x], newHeights[y, x], 1f));
+            }
+        }
+
+        byte[] bytes = atex.EncodeToPNG();
+
+        System.IO.File.WriteAllBytes(Application.dataPath + "/a.png", bytes);
     }
 
     IEnumerator SynthesizeTerrain()
