@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8153814428779769728}
   - component: {fileID: 9100166992167173667}
   - component: {fileID: 904725421917684284}
+  - component: {fileID: 1101398456498233603}
   m_Layer: 0
   m_Name: TerrainModifier
   m_TagString: Untagged
@@ -90,3 +91,17 @@ MonoBehaviour:
     type: 2}
   cliffLayer_2: {fileID: 8574412962073106934, guid: d1685375fd84e62439c572449faa4657,
     type: 2}
+--- !u!114 &1101398456498233603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8150113172363373395}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a0290981acc45744aac23185847e7cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sampleNum: 8196
+  foliage: {fileID: 0}

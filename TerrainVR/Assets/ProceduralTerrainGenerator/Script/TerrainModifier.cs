@@ -468,6 +468,9 @@ public class TerrainModifier : MonoBehaviour
         yield return StartCoroutine(GrabTerrainData());
         yield return StartCoroutine(SynthesizeTerrain());
 
+        FoliageGenerator foliage = GameObject.FindObjectOfType<FoliageGenerator>();
+        if (foliage) foliage.GenerateFoliage();
+
         if (player != null) player.freezeInput = false;
     }
 

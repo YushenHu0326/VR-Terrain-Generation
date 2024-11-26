@@ -193,7 +193,7 @@ PrefabInstance:
         type: 3}
       propertyPath: foliage
       value: 
-      objectReference: {fileID: 168064, guid: 43716a8d8eaa9e1479d6ea2a0a839e68, type: 3}
+      objectReference: {fileID: 182382, guid: 056a1e0bbdd60be4daff8115f1a7f0c4, type: 3}
     - target: {fileID: 1292333221790347841, guid: b1f344c695597c941bb634cab8ea1d2c,
         type: 3}
       propertyPath: m_LocalPosition.x
