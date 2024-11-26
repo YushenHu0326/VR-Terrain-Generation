@@ -11,6 +11,8 @@ public class GestureDetector : MonoBehaviour
     public OVRHand rightHand;
     public OVRHand leftHand;
 
+    public GameObject centerEyeAnchor;
+
     private OVRCameraRig rig;
 
     public bool rightHandPinching, leftHandPinching;
@@ -49,8 +51,6 @@ public class GestureDetector : MonoBehaviour
     {
         if (leftHand == null || rightHand == null) return;
 
-        rightHandPinching = rightHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
-        leftHandPinching = leftHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
         //float rightHandPinchingStrength = rightHand.GetFingerPinchStrength(OVRHand.HandFinger.Ring);
         //Debug.Log("rightHandPinchingStrength" + rightHandPinchingStrength);
         /*
@@ -65,6 +65,12 @@ public class GestureDetector : MonoBehaviour
         }*/
         rightHandPos = rightHand.PointerPose.gameObject.transform.position * rig.transform.localScale.x;
         leftHandPos = leftHand.PointerPose.gameObject.transform.position * rig.transform.localScale.x;
+
+        bool rightHandInSight = Vector3.Angle(centerEyeAnchor.transform.forward, rightHandPos - centerEyeAnchor.transform.position) < 60f;
+        bool leftHandInSight = Vector3.Angle(centerEyeAnchor.transform.forward, leftHandPos - centerEyeAnchor.transform.position) < 60f;
+
+        rightHandPinching = rightHand.GetFingerIsPinching(OVRHand.HandFinger.Index) && rightHandInSight;
+        leftHandPinching = leftHand.GetFingerIsPinching(OVRHand.HandFinger.Index) && leftHandInSight;
 
         if (rightLine != null && leftLine != null)
         {
